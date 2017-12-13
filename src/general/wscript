@@ -1,0 +1,150 @@
+# @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+#
+# BSD 3-Clause License
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+# 1.  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# We kindly request you to use one or more of the following phrases to refer to foxBMS in your hardware, software, documentation or advertising materials:
+#
+# &Prime;This product uses parts of foxBMS&reg;&Prime;
+#
+# &Prime;This product includes parts of foxBMS&reg;&Prime;
+#
+# &Prime;This product is derived from foxBMS&reg;&Prime;
+
+"""WAF script where the actual build of the binary file happens
+"""
+
+import os
+
+from waflib import Logs, Utils, Context
+
+
+def build(bld):
+    """Final instructions of waf function "build" for the binary file
+
+    waf "build" function uses the  libraries build for the modules
+     - application (libfoxbms-application.a)
+     - engine (libfoxbms-engine.a)
+     - hal (libfoxbms-CMSIS.a and libfoxbms-stmhal.a)
+     - module (libfoxbms-module.a)
+     - os (libfoxbms-os.a)
+     - test (libfoxbms-test.a)
+
+    The output is named as specified in APPNAME.
+
+    The waf feature function "hexgen" and "bingen" are exectued after linking.
+    """
+    if bld.env.CPU_MAJOR == "STM32F4xx":
+            srcs = ' '.join([
+                os.path.join('config', 'nvic_cfg.c'),
+                os.path.join('config', bld.env.CPU_MAJOR, 'stm32f4xx_hal_msp.c'),
+                os.path.join('config', bld.env.CPU_MAJOR, 'stm32f4xx_it.c'),
+                os.path.join('config', bld.env.CPU_MAJOR, 'system_stm32f4xx.c'),
+            ])
+    elif bld.env.CPU_MAJOR == "STM32F7xx":
+            srcs = ' '.join([
+                os.path.join('config', 'nvic_cfg.c'),
+                os.path.join('config', bld.env.CPU_MAJOR, 'stm32f7xx_hal_msp.c'),
+                os.path.join('config', bld.env.CPU_MAJOR, 'stm32f7xx_it.c'),
+                os.path.join('config', bld.env.CPU_MAJOR, 'system_stm32f7xx.c'),
+            ])
+        
+    srcs += ' ' + ' '.join([
+            os.path.join('main.c'),
+            os.path.join('nvic.c'),
+            os.path.join('version.c'),
+            os.path.join('config', 'batterysystem_cfg.c'),
+            ])
+    includes = os.path.join(bld.bldnode.abspath()) + ' '
+    includes += bld.env.__inc_FreeRTOS + ' ' + bld.env.__inc_hal
+    includes += ' '.join([
+            '.',
+
+            os.path.join('..', 'application', 'bal'),
+            os.path.join('..', 'application', 'com'),
+            os.path.join('..', 'application', 'config'),
+            os.path.join('..', 'application', 'sox'),
+            os.path.join('..', 'engine', 'sys'),
+            os.path.join('..', 'engine', 'bms'),
+            os.path.join('..', 'engine', 'config'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'engine', 'database'),
+            os.path.join('..', 'engine', 'diag'),
+            os.path.join('..', 'engine', 'task'),
+
+            os.path.join('..', 'general'),
+            os.path.join('config'),
+            os.path.join('includes'),
+            os.path.join('config', bld.env.CPU_MAJOR),
+
+            os.path.join('..', 'module', 'config'),
+            os.path.join('..', 'module', 'contactor'),
+            os.path.join('..', 'module', 'timer'),
+            os.path.join('..', 'module', 'nvram'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'adc'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'can'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'chksum'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'dma'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'interlock'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'io'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'rcc'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'rtc'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'mcu'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'ltc'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'meas'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'spi'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'uart'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'utils'),
+            os.path.join(bld.top_dir, bld.env.__sw_dir, bld.env.__bld_common, 'src', 'module', 'watchdog'),
+
+            os.path.join('..', 'os'),
+            ])
+
+    use = [
+        'foxbms-os',
+        'foxbms-CMSIS',
+        'foxbms-common-engine',
+        'foxbms-engine',
+        'foxbms-application',
+        'foxbms-module',
+        'foxbms-common-module',
+        'foxbms-stmhal',
+        ]
+
+       # -Wl,-Map,"MAPNAME"
+
+    if bld.env.CPU_MAJOR == "STM32F4xx":
+        startupscript = ' ' + os.path.join('config', bld.env.CPU_MAJOR, 'startup_stm32f429xx.S')
+        _flags = ['-mthumb', '-mlittle-endian', '-fsigned-char',
+            '-ffreestanding', '-fno-move-loop-invariants', '-fmessage-length=0',
+            '-fsigned-char', '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16',
+            '-mfloat-abi=softfp', '-std=c99', '-ffunction-sections',
+            '-fdata-sections', '-Wall']
+    elif bld.env.CPU_MAJOR == "STM32F7xx":
+        startupscript = ' ' + os.path.join('config', bld.env.CPU_MAJOR, 'startup_stm32f767xx.S')
+        _flags = ['-mthumb', '-mlittle-endian', '-fsigned-char',
+            '-ffreestanding', '-fno-move-loop-invariants', '-fmessage-length=0',
+            '-fsigned-char', '-mcpu=cortex-m7', '-mfpu=fpv5-sp-d16',
+            '-mfloat-abi=hard', '-std=c99', '-ffunction-sections',
+            '-fdata-sections', '-Wall']
+
+    if bld.env.target == 'release':
+        bld.program(source=srcs + [d],
+                    target=bld.env.basename + '.elf',
+                    includes=includes,
+                    features='strip',
+                    linkflags=['-T' + bld.env.ldscript, '-Xlinker', '--gc-sections', '--specs=nosys.specs', '--specs=nano.specs'],
+                    use=use)
+    else:
+        bld.program(source=srcs + startupscript,
+                    target=bld.env.appname + '.elf',
+                    includes=includes,
+                    features=['hexgen', 'bingen', 'chksum'],
+                    linkflags=_flags + ['-T' + bld.env.ldscript, '-Wl,-Map,foxbms.map', '-Xlinker', '--gc-sections', '--specs=nosys.specs', '--specs=nano.specs'],
+                    use=use)
+
+# vim: set ft=python :
