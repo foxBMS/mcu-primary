@@ -77,6 +77,16 @@ typedef enum {
 */
 #define BS_NR_OF_BAT_CELLS_PER_MODULE               12
 
+#if BS_NR_OF_BAT_CELLS_PER_MODULE<=12
+    #define BS_MAX_SUPPORTED_CELLS         12
+#elif BS_NR_OF_BAT_CELLS_PER_MODULE<=15
+    #define BS_MAX_SUPPORTED_CELLS         15
+#elif BS_NR_OF_BAT_CELLS_PER_MODULE<=18
+    #define BS_MAX_SUPPORTED_CELLS         18
+#else
+    #error "Unsupported number of cells per module, higher than 18"
+#endif
+
 /**
  * @ingroup CONFIG_BATTERYSYSTEM
  * Number of LTC-ICs per battery module

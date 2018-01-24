@@ -49,35 +49,24 @@
 */
 #define SLAVE_BOARD_VERSION 2
 
-/**
- * @ingroup CONFIG_LTC
- * If set to TRUE, PEC errors do not lead to an error state
- * If set to FALSE, further error handling is needed (currently not implemented)
- * \par Type:
- * select(2)
- * \par Default:
- * 0
-*/
-//#define LTC_GOTO_PEC_ERROR_STATE TRUE
-#define LTC_GOTO_PEC_ERROR_STATE FALSE
 
-/**
- * @ingroup CONFIG_LTC
- * If set to TRUE, SPI transmission errors do not lead to an error state
- * If set to FALSE, further error handling is needed (currently not implemented)
- * \par Type:
- * select(2)
- * \par Default:
- * 0
-*/
-#define LTC_DISCARD_MUX_CHECK TRUE
-//#define LTC_DISCARD_MUX_CHECK FALSE
+
+//#define LTC_DISCARD_PEC TRUE
+#define LTC_DISCARD_PEC FALSE
+
+#define LTC_GOTO_MUX_CHECK TRUE
+//#define LTC_GOTO_MUX_CHECK FALSE
+
+//#define LTC_DISCARD_MUX_CHECK TRUE
+#define LTC_DISCARD_MUX_CHECK FALSE
+
+
 
 /**
  * Number of used LTC-ICs
  */
 
-#define LTC_N_LTC                       BS_NR_OF_MODULES*LTC_NUMBER_OF_LTC_PER_MODULE
+#define LTC_N_LTC                       BS_NR_OF_MODULES
 /**
  * Number of multiplexer used per LTC-IC
  */
@@ -246,6 +235,14 @@
  */
 #define LTC_N_BYTES_FOR_DATA_TRANSMISSION   (4+(8*LTC_N_LTC))
 
+/**
+ * Number of Bytes to be transmitted in daisy-chain
+ * Data
+ *  - 6 Bytes data per LTC
+ */
+#define LTC_N_BYTES_FOR_DATA_TRANSMISSION_DATA_ONLY   (0+(6*LTC_N_LTC))
+
+
 //Transmit functions
 #define LTC_SendWakeUp()                SPI_Transmit(LTC_SPI_HANDLE, (uint8_t *) ltc_cmdDummy, 1)
 #define LTC_SendI2CCmd(txbuf)           SPI_Transmit(LTC_SPI_HANDLE, txbuf, 4+9)
@@ -266,8 +263,12 @@ extern LTC_MUX_SEQUENZ_s ltc_mux_seq;
  * sensors by default.
  * Lookup table between temperature sensors and battery cells
  */
-extern const uint8_t ltc_muxsensortemperatur_cfg[4];
+extern const uint8_t ltc_muxsensortemperatur_cfg[BS_NR_OF_TEMP_SENSORS_PER_MODULE];
 
+/**
+ * Lookup table to indicate which voltage inputs are used
+ */
+extern const uint8_t ltc_voltage_input_used[BS_MAX_SUPPORTED_CELLS];
 
 /*================== Function Prototypes ==================================*/
 

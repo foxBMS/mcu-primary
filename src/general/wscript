@@ -107,9 +107,9 @@ def build(bld):
     use = [
         'foxbms-os',
         'foxbms-CMSIS',
+        'foxbms-application',
         'foxbms-common-engine',
         'foxbms-engine',
-        'foxbms-application',
         'foxbms-module',
         'foxbms-common-module',
         'foxbms-stmhal',

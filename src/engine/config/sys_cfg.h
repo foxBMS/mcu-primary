@@ -27,7 +27,7 @@
  * @ingroup ENGINE_CONF
  * @prefix  SYS
  *
- * @brief   Syscontrol driver configuration header
+ * @brief   Sys driver configuration header
  */
 
 #ifndef SYS_CFG_H_

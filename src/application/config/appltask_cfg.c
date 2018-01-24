@@ -50,9 +50,20 @@
 #include "com.h"
 #include "led.h"
 #include "cansignal.h"
+#include "database.h"
+#include "meas.h"
+
 /*================== Macros and Definitions ===============================*/
 
 /*================== Constant and Variable Definitions ====================*/
+
+static uint8_t io_initialized = FALSE;
+static uint8_t io_direction = 1;
+static uint8_t io_counter = 0;
+static uint8_t io_cycle = 0;
+static uint8_t first_cycle = 0;
+static DATA_BLOCK_SLAVE_CONTROL_s example_slave_control;
+
 /**
  * predefined 1ms task for user code
  */
@@ -107,6 +118,9 @@ void APPL_Cyclic_10ms(void)
 
 void APPL_Cyclic_100ms(void)
 {
+    uint8_t i;
+    //uint8_t j; //used for DEMO only
+
     DIAG_SysMonNotify(DIAG_SYSMON_APPL_CYCLIC_100ms, 0);        // task is running, state = ok
 
     /* User specific implementations:   */
@@ -117,4 +131,89 @@ void APPL_Cyclic_100ms(void)
         COM_printHelpCommand();
 #endif
 
+    if (first_cycle<10) {
+        first_cycle++;
+    } else if (first_cycle == 10){
+        /************************************************************
+        //DEMO, write to external slave EEPROM, must NOT be done to often, or EEPROM will be worn out
+        DATA_GetTable(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+        example_slave_control.eeprom_write_address_to_use = 0x162;
+        for (j=0; j<BS_NR_OF_MODULES; j++) {
+            example_slave_control.eeprom_value_write[j] = 0x3E;
+        }
+        DATA_StoreDataBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+        //MEAS_Request_EEPROM_Write();
+        ************************************************************/
+        first_cycle++;
+    } else {
+        //Shifting 1 up and down (light cycle demo if LEDs are connected to the port-expander)
+        if (io_initialized == FALSE) {
+            io_initialized = TRUE;
+            for (i=0; i<BS_NR_OF_MODULES; i++) {
+                io_cycle = 1;
+            }
+        }
+        else {
+            if (io_counter%2==0) {
+                if (io_direction == 1) {
+                    if (io_cycle != 128) {
+                        io_cycle <<= 1;
+                    } else {
+                        io_direction = 0;
+                    }
+                }
+                if (io_direction == 0) {
+                    if (io_cycle != 1) {
+                        io_cycle >>= 1;
+                    } else {
+                        io_direction = 1;
+                    }
+                }
+            }
+
+        }
+
+        DATA_GetTable(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+        for (i=0; i<BS_NR_OF_MODULES; i++) {
+            example_slave_control.io_value_out[i] = ~io_cycle;
+        }
+
+        if (io_counter%2 == 0) {
+
+            /************************************************************
+            //DEMO, write to port-expander
+            //DATA_StoreDataBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+            //MEAS_Request_IO_Write();
+            ************************************************************/
+        }
+        else if (io_counter%3 == 0) {
+            /************************************************************
+            //DEMO, read from port-expander
+            //MEAS_Request_IO_Read();
+            ************************************************************/
+        }
+        else if (io_counter%11 == 0) {
+            /************************************************************
+            //DEMO, read external temperature sensor on slaves
+            //MEAS_Request_Temperature_Read();
+            ************************************************************/
+        }
+        else if (io_counter%17 == 0) {
+            /************************************************************
+            //DEMO, read balancing feedback on slaves
+            //MEAS_Request_BalancingFeedback_Read();
+            ************************************************************/
+        }
+        else if (io_counter%29 == 0) {
+            /************************************************************
+            //DEMO, read from external slave EEPROM
+            example_slave_control.eeprom_read_address_to_use = 0x162;
+            DATA_StoreDataBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+            //MEAS_Request_EEPROM_Read();
+            ************************************************************/
+
+        }
+
+        io_counter++;
+    }
 }
