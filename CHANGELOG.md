@@ -1,5 +1,11 @@
 # foxBMS Change Log
 
+## Release 1.0.1
+
+- fixed a bug in CANSIGNAL module when less than 12 battery cells per module were used. This leads to a transmission of invalid cell 
+voltages in some cases.
+- fixed bug that balancing flag was not set correctly during balancing.
+
 ## Release 1.0.0
 
 - renamed repository from ``foxBMS-primary`` to ``mcu-primary``.
