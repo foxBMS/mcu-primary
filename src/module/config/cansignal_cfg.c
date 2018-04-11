@@ -77,6 +77,9 @@ static uint32_t cans_gettriggercurrent(uint32_t sigIdx, void *value);
 /*================== Macros and Definitions ===============================*/
 static DATA_BLOCK_CURRENT_s cans_current_tab;
 
+#define CANS_MODULSIGNALS_VOLT      (CAN0_SIG_Mod0_temp_valid_0_2 - CAN0_SIG_Mod0_volt_valid_0_2)
+#define CANS_MODULSIGNALS_TEMP      (CAN0_SIG_Mod1_volt_valid_0_2 - CAN0_SIG_Mod0_temp_valid_0_2)
+
 
 /*================== Constant and Variable Definitions ====================*/
 
@@ -515,28 +518,28 @@ static uint32_t cans_getvolt(uint32_t sigIdx, void *value) {
     }
 
     // Determine module and cell number
-    if (sigIdx - CAN0_SIG_Mod0_volt_valid_0_2 <= 15) {
+    if (sigIdx - CAN0_SIG_Mod0_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 0;
         cellIdx = sigIdx - CAN0_SIG_Mod0_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod1_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod1_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 1;
         cellIdx = sigIdx - CAN0_SIG_Mod1_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod2_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod2_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 2;
         cellIdx = sigIdx - CAN0_SIG_Mod2_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod3_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod3_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 3;
         cellIdx = sigIdx - CAN0_SIG_Mod3_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod4_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod4_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 4;
         cellIdx = sigIdx - CAN0_SIG_Mod4_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod5_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod5_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 5;
         cellIdx = sigIdx - CAN0_SIG_Mod5_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod6_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod6_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 6;
         cellIdx = sigIdx - CAN0_SIG_Mod6_volt_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod7_volt_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod7_volt_valid_0_2 < CANS_MODULSIGNALS_VOLT) {
         modIdx = 7;
         cellIdx = sigIdx - CAN0_SIG_Mod7_volt_valid_0_2;
     }
@@ -735,28 +738,28 @@ uint32_t cans_gettemp(uint32_t sigIdx, void *value) {
     }
 
     // Determine module and cell number
-    if (sigIdx - CAN0_SIG_Mod0_temp_valid_0_2 <= 15) {
+    if (sigIdx - CAN0_SIG_Mod0_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 0;
         cellIdx = sigIdx - CAN0_SIG_Mod0_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod1_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod1_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 1;
         cellIdx = sigIdx - CAN0_SIG_Mod1_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod2_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod2_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 2;
         cellIdx = sigIdx - CAN0_SIG_Mod2_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod3_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod3_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 3;
         cellIdx = sigIdx - CAN0_SIG_Mod3_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod4_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod4_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 4;
         cellIdx = sigIdx - CAN0_SIG_Mod4_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod5_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod5_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 5;
         cellIdx = sigIdx - CAN0_SIG_Mod5_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod6_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod6_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 6;
         cellIdx = sigIdx - CAN0_SIG_Mod6_temp_valid_0_2;
-    } else if (sigIdx - CAN0_SIG_Mod7_temp_valid_0_2 <= 15) {
+    } else if (sigIdx - CAN0_SIG_Mod7_temp_valid_0_2 < CANS_MODULSIGNALS_TEMP) {
         modIdx = 7;
         cellIdx = sigIdx - CAN0_SIG_Mod7_temp_valid_0_2;
     }
@@ -1546,7 +1549,7 @@ uint32_t cans_getisoguard(uint32_t sigIdx, void *value) {
 
             case CAN0_SIG_InsulationValue:
             // Check limits
-            canData = cans_checkLimits((float)isoguard_tab.resistance, sigIdx);
+            canData = cans_checkLimits((float)isoguard_tab.resistance_kOhm, sigIdx);
             // Apply offset and factor
             *(uint32_t *)value = (uint32_t)((canData + cans_CAN0_signals_tx[sigIdx].offset) * cans_CAN0_signals_tx[sigIdx].factor);
             break;

@@ -52,6 +52,10 @@
  */
 LTC_MUX_CH_CFG_s ltc_mux_seq_main_ch1[] = {
     // multiplexer 0 measurement
+//        {
+//            .muxID    = 0,
+//            .muxCh    = 0xFF,
+//        },
     {
         .muxID    = 0,
         .muxCh    = 0,
@@ -168,7 +172,7 @@ LTC_MUX_SEQUENZ_s ltc_mux_seq = {
 };
 
 
-const uint8_t ltc_muxsensortemperatur_cfg[4] = {
+const uint8_t ltc_muxsensortemperatur_cfg[BS_NR_OF_TEMP_SENSORS_PER_MODULE] = {
     1-1 ,       /*!< index 0 = mux 0, ch 0 */
     2-1 ,       /*!< index 1 = mux 0, ch 1 */
     3-1 ,       /*!< index 2 = mux 0, ch 2 */
@@ -186,6 +190,23 @@ const uint8_t ltc_muxsensortemperatur_cfg[4] = {
     //15-1 ,    /*!< index 14 = mux 1, ch 6 */
     //16-1      /*!< index 15 = mux 1, ch 7 */
 };
+
+
+const uint8_t ltc_voltage_input_used[BS_MAX_SUPPORTED_CELLS] = {
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+    1 ,
+};
+
 
 /*================== Function Prototypes ==================================*/
 

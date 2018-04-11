@@ -27,7 +27,7 @@
  * @ingroup ENGINE_CONF
  * @prefix  SYS
  *
- * @brief   Syscontrol driver configuration
+ * @brief   Sys driver configuration
  */
 
 /*================== Includes =============================================*/

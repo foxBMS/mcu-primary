@@ -102,6 +102,8 @@ static void BAL_Deactivate(void) {
         bal_balancing.value[i] = 0;
     }
 
+    bal_balancing.enable_balancing = 0;
+
     bal_balancing.previous_timestamp = bal_balancing.timestamp;
     bal_balancing.timestamp = MCU_GetTimeStamp();
     DATA_StoreDataBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
@@ -131,6 +133,7 @@ static uint8_t BAL_Activate(void) {
         }
     }
 
+    bal_balancing.enable_balancing = 1;
 
     bal_balancing.previous_timestamp = bal_balancing.timestamp;
     bal_balancing.timestamp = MCU_GetTimeStamp();

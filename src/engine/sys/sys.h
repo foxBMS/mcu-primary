@@ -21,13 +21,13 @@
  */
 
 /**
- * @file    syscontrol.h
+ * @file    sys.h
  * @author  foxBMS Team
  * @date    21.09.2015 (date of creation)
  * @ingroup ENGINE
  * @prefix  SYS
  *
- * @brief   Syscontrol driver header
+ * @brief   Sys driver header
  *
  *
  */
@@ -42,19 +42,19 @@
 /*================== Macros and Definitions ===============================*/
 
 /**
- * Symbolic names for busyness of the syscontrol
+ * Symbolic names for busyness of the system
  */
 typedef enum {
-    SYS_CHECK_OK        = 0,    /*!< syscontrol ok      */
-    SYS_CHECK_BUSY      = 1,    /*!< syscontrol busy    */
-    SYS_CHECK_NOT_OK    = 2,    /*!< syscontrol not ok  */
+    SYS_CHECK_OK        = 0,    /*!< system ok      */
+    SYS_CHECK_BUSY      = 1,    /*!< system busy    */
+    SYS_CHECK_NOT_OK    = 2,    /*!< system not ok  */
 } SYS_CHECK_e;
 
 
 
 typedef enum {
-  SYS_MODE_STARTUP_EVENT    = 0,    /*!< syscontrol startup                 */
-// SYS_MODE_EVENT_INIT      = 1,    /*!< TODO                               */
+  SYS_MODE_STARTUP_EVENT    = 0,    /*!< system startup                     */
+// SYS_MODE_EVENT_INIT      = 1,    /*!< todo                               */
   SYS_MODE_CYCLIC_EVENT     = 2,    /*!< for cyclic events                  */
   SYS_MODE_TRIGGERED_EVENT  = 3,    /*!< for triggered events               */
   SYS_MODE_ABNORMAL_EVENT   = 4,    /*!< for abnormal (error etc.) events   */
@@ -129,7 +129,7 @@ typedef enum {
 
 
 /**
- * Return values when state requests are made to the SYS statemachine
+ * Possible return values when state requests are made to the SYS statemachine
  */
 typedef enum {
     SYS_OK                                 = 0,    /*!< CONT --> ok                             */

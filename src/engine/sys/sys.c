@@ -21,13 +21,13 @@
  */
 
 /**
- * @file    syscontrol.c
+ * @file    sys.c
  * @author  foxBMS Team
  * @date    21.09.2015 (date of creation)
  * @ingroup ENGINE
  * @prefix  SYS
  *
- * @brief   Syscontrol driver implementation
+ * @brief   Sys driver implementation
  */
 
 
@@ -363,6 +363,7 @@ void SYS_Trigger(void) {
             case SYS_STATEMACH_FIRST_MEASUREMENT_CYCLE:
                 SYS_SAVELASTSTATES();
                 if (sys_state.substate == SYS_ENTRY) {
+                    MEAS_StartMeasurement();
                     sys_state.InitCounter = 0;
                     sys_state.substate = SYS_WAIT_FIRST_MEASUREMENT_CYCLE;
                 } else if (sys_state.substate == SYS_WAIT_FIRST_MEASUREMENT_CYCLE) {

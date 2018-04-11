@@ -474,6 +474,9 @@ EEPR_ERRORTYPES_e EEPR_InitChannelData(void)
         }
     }
 
+    /* Reset error because EEPR_Header is separate section in EEPROM */
+    errtype = EEPR_NO_ERROR;
+
     if(RTC_NVMRAM_DATAVALID_VARIABLE == 0)
     {  // NVM data corrupt, so set all the dirty flags and take backup (if valid) or default values
         for(cnt = 0; cnt < EEPR_CHANNEL_MAX_NR; cnt++){
@@ -481,19 +484,19 @@ EEPR_ERRORTYPES_e EEPR_InitChannelData(void)
         }
         errtype |= EEPR_ReadChannelData(EEPR_CH_NVSOC);
         retval |= errtype;
-        if(errtype != EEPR_NO_ERROR){
+        if (errtype != EEPR_NO_ERROR) {
             errtype = EEPR_NO_ERROR;
             EEPR_SetDefaultValue(EEPR_CH_NVSOC);
         }
         errtype |= EEPR_ReadChannelData(EEPR_CH_CONTACTOR);
         retval |= errtype;
-        if(errtype != EEPR_NO_ERROR){
+        if (errtype != EEPR_NO_ERROR) {
             errtype = EEPR_NO_ERROR;
             EEPR_SetDefaultValue(EEPR_CH_CONTACTOR);
         }
         errtype |= EEPR_ReadChannelData(EEPR_CH_OPERATING_HOURS);
         retval |= errtype;
-        if(errtype != EEPR_NO_ERROR){
+        if (errtype != EEPR_NO_ERROR) {
             errtype = EEPR_NO_ERROR;
             EEPR_SetDefaultValue(EEPR_CH_OPERATING_HOURS);
         }
@@ -504,21 +507,27 @@ EEPR_ERRORTYPES_e EEPR_InitChannelData(void)
         //@FIXME do set dirty flags for not double buffered channel (not in bkpsram) unless the ram is not cleared (warm reset)
         errtype |= EEPR_RefreshChannelData(EEPR_CH_NVSOC);
         retval |= errtype;
-        if(errtype == EEPR_ERR_RD){ // read error (no eeprom data available) and NVM data corrupt, so take default values
+        if (errtype == EEPR_ERR_RD || errtype == (EEPR_ERR_RD | EEPR_ERR_WR)) {
+            // read error can only occur if checksum of bkpsram channel is corrupt -> set default values
+            // ignore possible write error because we definitely want to try writing to EEPROM
             errtype = EEPR_NO_ERROR;
             EEPR_SetDefaultValue(EEPR_CH_NVSOC);
         }
 
         errtype |= EEPR_RefreshChannelData(EEPR_CH_CONTACTOR);
         retval |= errtype;
-        if(errtype == EEPR_ERR_RD){ // read error (no eeprom data available) and NVM data corrupt, so take default values
+        if (errtype == EEPR_ERR_RD || errtype == (EEPR_ERR_RD | EEPR_ERR_WR)) {
+            // read error can only occur if checksum of bkpsram channel is corrupt -> set default values
+            // ignore possible write error because we definitely want to try writing to EEPROM
             errtype = EEPR_NO_ERROR;
             EEPR_SetDefaultValue(EEPR_CH_CONTACTOR);
         }
 
         errtype |= EEPR_RefreshChannelData(EEPR_CH_OPERATING_HOURS);
         retval |= errtype;
-        if(errtype == EEPR_ERR_RD){ // read error (no eeprom data available) and NVM data corrupt, so take default values
+        if (errtype == EEPR_ERR_RD || errtype == (EEPR_ERR_RD | EEPR_ERR_WR)) {
+            // read error can only occur if checksum of bkpsram channel is corrupt -> set default values
+            // ignore possible write error because we definitely want to try writing to EEPROM
             errtype = EEPR_NO_ERROR;
             EEPR_SetDefaultValue(EEPR_CH_OPERATING_HOURS);
         }

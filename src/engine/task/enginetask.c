@@ -61,8 +61,6 @@
 
 void ENG_Init(void) {
 
-    SYS_RETURN_TYPE_e sys_retVal = SYS_ILLEGAL_TASK_TYPE;
-
     DATA_BLOCK_SYSTEMSTATE_s error_flags;
 
     DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
@@ -91,6 +89,8 @@ void ENG_Init(void) {
     error_flags.under_temperature_charge    = 0;
     error_flags.under_temperature_discharge = 0;
     error_flags.crc_error                   = 0;
+    error_flags.mux_error                   = 0;
+    error_flags.spi_error                   = 0;
 
     error_flags.can_timing                  = 0;
     error_flags.can_timing_cc               = 0;
@@ -100,7 +100,7 @@ void ENG_Init(void) {
     DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
 
     // Init Sys
-    sys_retVal = SYS_SetStateRequest(SYS_STATE_INIT_REQUEST);
+    SYS_SetStateRequest(SYS_STATE_INIT_REQUEST);
 
 #if BUILD_MODULE_ENABLE_SAFETY_FEATURES == 1
     IMC_enableInterrupt();
@@ -112,7 +112,6 @@ void ENG_TSK_Cyclic_1ms(void) {
     SYS_Trigger();
     CONT_Trigger();
     ILCK_Trigger();
-    MEAS_Ctrl();
     LTC_Trigger();
     EEPR_Trigger();
 }

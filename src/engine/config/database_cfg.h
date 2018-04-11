@@ -125,7 +125,7 @@ typedef struct {
 #define     DATA_BLOCK_ID_STATEREQUEST                  DATA_BLOCK_8
 #define     DATA_BLOCK_ID_MINMAX                        DATA_BLOCK_9
 #define     DATA_BLOCK_ID_ISOGUARD                      DATA_BLOCK_10
-#define     DATA_BLOCK_ID_USER_IO_CONTROL               DATA_BLOCK_11
+#define     DATA_BLOCK_ID_SLAVE_CONTROL                 DATA_BLOCK_11
 #define     DATA_BLOCK_ID_OPEN_WIRE_CHECK               DATA_BLOCK_12
 #define     DATA_BLOCK_ID_LTC_DEVICE_PARAMETER          DATA_BLOCK_13
 #define     DATA_BLOCK_ID_LTC_ACCURACY                  DATA_BLOCK_14
@@ -196,19 +196,26 @@ typedef struct {
 
 /*  data structure declaration of DATA_BLOCK_USER_IO_CONTROL */
 typedef struct {
-    uint8_t value_out[BS_NR_OF_MODULES];   /*!< data to be written to the port expander    */
-    uint8_t value_in[BS_NR_OF_MODULES];    /*!< data read from to the port expander        */
+    uint8_t io_value_out[BS_NR_OF_MODULES];   /*!< data to be written to the port expander    */
+    uint8_t io_value_in[BS_NR_OF_MODULES];    /*!< data read from to the port expander        */
+    uint8_t eeprom_value_write[BS_NR_OF_MODULES];   /*!< data to be written to the slave EEPROM    */
+    uint8_t eeprom_value_read[BS_NR_OF_MODULES];    /*!< data read from to the slave EEPROM        */
+    uint8_t external_sensor_temperature[BS_NR_OF_MODULES];    /*!< temperature from the external sensor on slave   */
+    uint32_t eeprom_read_address_to_use;                 /*!< address to read from for  slave EEPROM        */
+    uint32_t eeprom_read_address_last_used;                 /*!< last address used to read fromfor slave EEPROM        */
+    uint32_t eeprom_write_address_to_use;                 /*!< address to write to for slave EEPROM        */
+    uint32_t eeprom_write_address_last_used;                 /*!< last address used to write to for slave EEPROM        */
     uint32_t previous_timestamp;        /*!< timestamp of last database entry           */
     uint32_t timestamp;                 /*!< timestamp of database entry                */
     uint8_t state;                      /*!< for future use                             */
-} DATA_BLOCK_USER_IO_CONTROL_s;
+} DATA_BLOCK_SLAVE_CONTROL_s;
 
 /**
  * data block struct of cell balancing feedback
  */
 
 typedef struct {
-    uint16_t value[BS_NR_OF_BAT_CELLS];    /*!< unit: mV (opto-coupler output)     */
+    uint16_t value[BS_NR_OF_MODULES];    /*!< unit: mV (opto-coupler output)     */
     uint32_t previous_timestamp;        /*!< timestamp of last database entry   */
     uint32_t timestamp;                 /*!< timestamp of database entry        */
     uint8_t state;                      /*!< for future use                     */
@@ -309,7 +316,7 @@ typedef struct {
 typedef struct {
     uint8_t valid;                  /*!< 0 -> valid, 1 -> resistance unreliable                             */
     uint8_t state;                  /*!< 0 -> resistance/measurement OK , 1 -> resistance too low or error  */
-    uint8_t resistance;             /*!< in intervals (max 3bit)                                            */
+    uint32_t resistance_kOhm;       /*!< insulation resistance measured in kOhm                             */
     uint32_t timestamp;             /*!< timestamp of database entry                                        */
     uint32_t previous_timestamp;    /*!< timestamp of last database entry                                   */
 } DATA_BLOCK_ISOMETER_s;
@@ -369,6 +376,8 @@ typedef struct {
     uint8_t over_temperature_charge;                 /*!< 0 -> no error, 1 -> error         */
     uint8_t under_temperature_charge;                /*!< 0 -> no error, 1 -> error         */
     uint8_t crc_error;                               /*!< 0 -> no error, 1 -> error         */
+    uint8_t mux_error;                               /*!< 0 -> no error, 1 -> error         */
+    uint8_t spi_error;                               /*!< 0 -> no error, 1 -> error         */
     uint8_t can_timing;                              /*!< 0 -> no error, 1 -> error         */
     uint8_t can_timing_cc;                           /*!< 0 -> no error, 1 -> error         */
     uint8_t can_cc_used;                             /*!< 0 -> not present, 1 -> present    */
@@ -393,6 +402,7 @@ typedef struct {
     uint32_t timestamp;                 /*!< timestamp of database entry                        */
     uint32_t previous_timestamp;        /*!< timestamp of last database entry                   */
 } DATA_BLOCK_MOVING_MEAN_s;
+
 
 /*================== Constant and Variable Definitions ====================*/
 

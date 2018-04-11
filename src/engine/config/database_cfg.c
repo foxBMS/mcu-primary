@@ -102,9 +102,9 @@ DATA_BLOCK_SYSTEMSTATE_s data_block_errors[DOUBLE_BUFFERING];
 DATA_BLOCK_MOVING_MEAN_s data_block_mov_mean[DOUBLE_BUFFERING];
 
 /**
- * data block: user io control
+ * data block: slave control
  */
-DATA_BLOCK_USER_IO_CONTROL_s data_block_user_io_control[SINGLE_BUFFERING];
+DATA_BLOCK_SLAVE_CONTROL_s data_block_slave_control[SINGLE_BUFFERING];
 
 /**
  * data block: open wire check
@@ -180,8 +180,8 @@ DATA_BASE_HEADER_s  data_base_header[] = {
             SINGLE_BUFFERING,
     },
     {
-            (void*)(&data_block_user_io_control[0]),
-            sizeof(DATA_BLOCK_USER_IO_CONTROL_s),
+            (void*)(&data_block_slave_control[0]),
+            sizeof(DATA_BLOCK_SLAVE_CONTROL_s),
             SINGLE_BUFFERING,
     },
     {

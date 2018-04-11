@@ -894,6 +894,8 @@ static STD_RETURN_TYPE_e BMS_CheckAnyErrorFlagSet(void) {
         error_flags.under_temperature_charge    == 1 ||
         error_flags.under_temperature_discharge == 1 ||
         error_flags.crc_error                   == 1 ||
+        error_flags.mux_error                   == 1 ||
+        error_flags.spi_error                   == 1 ||
         error_flags.currentsensorresponding     == 1 ||
         error_flags.can_timing_cc               == 1 ||
         error_flags.can_timing                  == 1 ) {

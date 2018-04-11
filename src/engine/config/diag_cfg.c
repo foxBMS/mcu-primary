@@ -229,6 +229,30 @@ void DIAG_error_ltcpec(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
     }
     DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
 }
+void DIAG_error_ltcmux(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
+{
+    DATA_BLOCK_SYSTEMSTATE_s error_flags;
+    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    if(event==DIAG_EVENT_RESET){
+        error_flags.mux_error = 0;
+    }
+    if(event==DIAG_EVENT_NOK){
+        error_flags.mux_error = 1;
+    }
+    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+}
+void DIAG_error_ltcspi(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
+{
+    DATA_BLOCK_SYSTEMSTATE_s error_flags;
+    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    if(event==DIAG_EVENT_RESET){
+        error_flags.spi_error = 0;
+    }
+    if(event==DIAG_EVENT_NOK){
+        error_flags.spi_error = 1;
+    }
+    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+}
 void DIAG_error_contactormainplus(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
     DATA_BLOCK_SYSTEMSTATE_s error_flags;
@@ -366,9 +390,9 @@ DIAG_CH_CFG_s  diag_ch_cfg[] = {
     {DIAG_CH_OVERCURRENT_CHARGE,                   "OVERCURRENT_CHARGE",                  DIAG_GENERAL_TYPE, DIAG_ERROR_CURRENT_SENSITIVITY,           DIAG_RECORDING_ENABLED, DIAG_ENABLED, DIAG_error_overcurrentcharge},
     {DIAG_CH_OVERCURRENT_DISCHARGE,                "OVERCURRENT_DISCHARGE",               DIAG_GENERAL_TYPE, DIAG_ERROR_CURRENT_SENSITIVITY,           DIAG_RECORDING_ENABLED, DIAG_ENABLED, DIAG_error_overcurrentdischarge},
 
-    {DIAG_CH_LTC_SPI,                              "LTC_SPI",                             DIAG_GENERAL_TYPE, DIAG_ERROR_SENSITIVITY_HIGH,              DIAG_RECORDING_ENABLED, DIAG_ENABLED, dummyfu},
+    {DIAG_CH_LTC_SPI,                              "LTC_SPI",                             DIAG_GENERAL_TYPE, DIAG_ERROR_LTC_SPI_SENSITIVITY,              DIAG_RECORDING_ENABLED, DIAG_ENABLED, DIAG_error_ltcspi},
     {DIAG_CH_LTC_PEC,                              "LTC_PEC",                             DIAG_GENERAL_TYPE, DIAG_ERROR_LTC_PEC_SENSITIVITY,           DIAG_RECORDING_ENABLED, DIAG_ENABLED, DIAG_error_ltcpec},
-    {DIAG_CH_LTC_MUX,                              "LTC_MUX",                             DIAG_GENERAL_TYPE, DIAG_ERROR_SENSITIVITY_HIGH,              DIAG_RECORDING_ENABLED, DIAG_ENABLED, dummyfu},
+    {DIAG_CH_LTC_MUX,                              "LTC_MUX",                             DIAG_GENERAL_TYPE, DIAG_ERROR_LTC_MUX_SENSITIVITY,              DIAG_RECORDING_ENABLED, DIAG_ENABLED, DIAG_error_ltcmux},
 
     /* Communication events */
     {DIAG_CH_CAN_TIMING,                           "CAN_TIMING",                          DIAG_GENERAL_TYPE, DIAG_ERROR_CAN_TIMING_SENSITIVITY,        DIAG_RECORDING_ENABLED, DIAG_CAN_TIMING, DIAG_error_cantiming},
