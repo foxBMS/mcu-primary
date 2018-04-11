@@ -1549,7 +1549,7 @@ uint32_t cans_getisoguard(uint32_t sigIdx, void *value) {
 
             case CAN0_SIG_InsulationValue:
             // Check limits
-            canData = cans_checkLimits((float)isoguard_tab.resistance, sigIdx);
+            canData = cans_checkLimits((float)isoguard_tab.resistance_kOhm, sigIdx);
             // Apply offset and factor
             *(uint32_t *)value = (uint32_t)((canData + cans_CAN0_signals_tx[sigIdx].offset) * cans_CAN0_signals_tx[sigIdx].factor);
             break;

@@ -1,10 +1,15 @@
 # foxBMS Change Log
 
+## Release 1.0.2
+
+- fixed a bug in ISOGUARD module that caused a wrong insulation resistance to be transmitted via CAN if the measured insulation resistance was greater than 255kOhm
+- fixed a bug in EEPROM module that overwrote EEPROM data with default values if EEPROM header was corrupt
+
 ## Release 1.0.1
 
-- fixed a bug in CANSIGNAL module when less than 12 battery cells per module were used. This leads to a transmission of invalid cell 
+- fixed a bug in CANSIGNAL module when less than 12 battery cells per module were used. This lead to a transmission of invalid cell 
 voltages in some cases.
-- fixed bug that balancing flag was not set correctly during balancing.
+- fixed bug that balancing flag was not set correctly during balancing
 
 ## Release 1.0.0
 

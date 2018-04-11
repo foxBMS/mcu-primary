@@ -129,7 +129,7 @@ void ISO_MeasureInsulation(void) {
     static DATA_BLOCK_ISOMETER_s ISO_measData = {    // database structure
             .valid = 1,
             .state = 1,
-            .resistance = 0,
+            .resistance_kOhm = 0,
             .timestamp = 0,
             .previous_timestamp = 0,
     };
@@ -137,7 +137,7 @@ void ISO_MeasureInsulation(void) {
     retVal = IR155_MeasureResistance(&state, &resistance);
 
     /* Get resistance */
-    ISO_measData.resistance = resistance;
+    ISO_measData.resistance_kOhm = resistance;
 
     if(state == IR155_MEAS_NOT_VALID) {
         /* Measurement result is not valid */

@@ -316,7 +316,7 @@ typedef struct {
 typedef struct {
     uint8_t valid;                  /*!< 0 -> valid, 1 -> resistance unreliable                             */
     uint8_t state;                  /*!< 0 -> resistance/measurement OK , 1 -> resistance too low or error  */
-    uint8_t resistance;             /*!< in intervals (max 3bit)                                            */
+    uint32_t resistance_kOhm;       /*!< insulation resistance measured in kOhm                             */
     uint32_t timestamp;             /*!< timestamp of database entry                                        */
     uint32_t previous_timestamp;    /*!< timestamp of last database entry                                   */
 } DATA_BLOCK_ISOMETER_s;
