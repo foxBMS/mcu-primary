@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -40,55 +40,97 @@
 /*================== Macros and Definitions ===============================*/
 
 /*================== Constant and Variable Definitions ====================*/
+extern QueueHandle_t data_queueID;
 
 /*================== Function Prototypes ==================================*/
 
 /**
- * @brief   Initializes modules that were not initialized before scheduler start.
+ * @brief   creates cyclic tasks, called before scheduler start
  *
- * This function is called after the scheduler started but before any cyclic task runs.
- * Here modules get initialized that are not used during the startup process.
- *
- * @return  void
  */
-extern void ENG_Init(void);
-
+extern void ENG_CreateTask(void);
 
 /**
- * @brief   Cyclic 1ms task for the LTC measurement
+ * @brief   creates mutexes, called before scheduler start
  *
- * @return  void
+ */
+extern void ENG_CreateMutex(void);
+
+/**
+ * @brief   creates events, called before scheduler start
+ *
+ */
+extern void ENG_CreateEvent(void);
+
+/**
+ * @brief   creates queues, called before scheduler start
+ *
+ */
+extern void ENG_CreateQueues(void);
+
+/**
+ * @brief   Cyclic 1ms-Task, preemptive with TSK_Cyclic_10ms() and
+ *          TSK_Cyclic_100ms().
+ *
+ * @details The Task calls OsStartUp() in the very beginning, this is the first
+ *          active Task. Then the Task is delayed by a phase as defined in
+ *          eng_tskdef_cyclic_1ms.Phase (in milliseconds). After the phase
+ *          delay, the cyclic execution starts, the entry time is saved in
+ *          currentTime. After one cycle, the Task is set to sleep until entry
+ *          time + eng_tskdef_cyclic_1ms.CycleTime (in milliseconds). The Task
+ *          calls Job_1ms(), Job_2ms() and Job_5ms().
+ *
  */
 extern void ENG_TSK_Cyclic_1ms(void);
 
 /**
- * @brief   Task for system- and bmscontrol and SOX algorithms
+ * @brief   cyclic 10ms-Task, preemptive with TSK_Cyclic_1ms() and
+ *          TSK_Cyclic_100ms().
  *
- * @return  void
+ * @details Task is delayed by a phase as defined in
+ *          eng_tskdef_cyclic_10ms.Phase (in milliseconds). After the phase
+ *          delay, the cyclic execution starts, the entry time is saved in
+ *          currentTime. After one cycle, the Task is set to sleep until entry
+ *          time + eng_tskdef_cyclic_10ms.CycleTime (in milliseconds). The task
+ *          calls Job_10ms() and Job_50ms().
+ *
  */
 extern void ENG_TSK_Cyclic_10ms(void);
 
 /**
- * @brief   Task for ADC control, balancing control and isolation
- *          measurement
+ * @brief   cyclic 100ms-Task, preemptive with TSK_Cyclic_1ms() and
+ *          TSK_Cyclic_10ms().
  *
- * @return  void
+ * @details Task is delayed by a phase as defined in
+ *          eng_tskdef_cyclic_100ms.Phase (in milliseconds). After the phase
+ *          delay, the cyclic execution starts, the entry time is saved in
+ *          currentTime. After one cycle, the Task is set to sleep until entry
+ *          time + eng_tskdef_cyclic_100ms.CycleTime (in milliseconds). The task
+ *          calls Job_100ms(), Job_500ms() and Job_1s().
+ *
  */
 extern void ENG_TSK_Cyclic_100ms(void);
 
+
 /**
- * @brief   Engine Task for handling of events
+ * @brief   cyclic and event driven handler.
  *
- * @return  void
+ * @details Task configurations (cycle and delay time) are specified by
+ *          eng_tskdef_eventhandler.
+ *
  */
 extern void ENG_TSK_EventHandler(void);
 
+
 /**
- * @brief   Engine Task for diagnosis
+ * @brief   cyclic diagnosis task.
  *
- * @return  void
+ * @details Task configurations (cycle and delay time) are specified by
+ *          eng_tskdef_diagnosis.
+ *
  */
 extern void ENG_TSK_Diagnosis(void);
+
 /*================== Function Implementations =============================*/
 
 #endif /* ENGINETASK_H_ */

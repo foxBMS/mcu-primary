@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -46,7 +46,7 @@
  *
  * this value is extendible but limitation is done due to RAM consumption and performance
  */
-#define DATA_MAX_BLOCK_NR                16        /* max 16 Blocks currently supported*/
+#define DATA_MAX_BLOCK_NR                20        /* max 20 Blocks currently supported*/
 
 /**
  * @brief data block identification number
@@ -68,6 +68,10 @@ typedef enum {
     DATA_BLOCK_14       = 13,
     DATA_BLOCK_15       = 14,
     DATA_BLOCK_16       = 15,
+    DATA_BLOCK_17       = 16,
+    DATA_BLOCK_18       = 17,
+    DATA_BLOCK_19       = 18,
+    DATA_BLOCK_20       = 19,
     DATA_BLOCK_MAX      = DATA_MAX_BLOCK_NR,
 } DATA_BLOCK_ID_TYPE_e;
 
@@ -129,8 +133,11 @@ typedef struct {
 #define     DATA_BLOCK_ID_OPEN_WIRE_CHECK               DATA_BLOCK_12
 #define     DATA_BLOCK_ID_LTC_DEVICE_PARAMETER          DATA_BLOCK_13
 #define     DATA_BLOCK_ID_LTC_ACCURACY                  DATA_BLOCK_14
-#define     DATA_BLOCK_ID_SYSTEMSTATE                   DATA_BLOCK_15
+#define     DATA_BLOCK_ID_ERRORSTATE                    DATA_BLOCK_15
 #define     DATA_BLOCK_ID_MOV_MEAN                      DATA_BLOCK_16
+#define     DATA_BLOCK_ID_CONTFEEDBACK                  DATA_BLOCK_17
+#define     DATA_BLOCK_ID_ILCKFEEDBACK                  DATA_BLOCK_18
+#define     DATA_BLOCK_ID_SYSTEMSTATE                   DATA_BLOCK_19
 
 /**
  * data block struct of cell voltage
@@ -251,6 +258,8 @@ typedef struct {
     uint8_t state_power;
     uint8_t state_cc;
     uint8_t state_ec;
+    uint8_t newCurrent;
+    uint8_t newPower;
     uint32_t previous_timestamp_cc;                           /*!< timestamp of C-C database entry   */
     uint32_t timestamp_cc;                                    /*!< timestamp of C-C database entry        */
 } DATA_BLOCK_CURRENT_s;
@@ -297,7 +306,7 @@ typedef struct {
     uint16_t voltage_module_number_max;
     uint16_t voltage_cell_number_max;
     uint16_t previous_voltage_max;
-    int32_t temperature_mean;
+    float temperature_mean;
     int16_t temperature_min;
     uint16_t temperature_module_number_min;
     uint16_t temperature_sensor_number_min;
@@ -357,7 +366,6 @@ typedef struct {
  */
 typedef struct {
     uint8_t general_error;                           /*!< 0 -> no error, 1 -> error         */
-    uint8_t bms_state;                               /*!< 0 -> no error, 1 -> error         */
     uint8_t currentsensorresponding;                 /*!< 0 -> no error, 1 -> error         */
     uint8_t main_plus;                               /*!< 0 -> no error, 1 -> error         */
     uint8_t main_minus;                              /*!< 0 -> no error, 1 -> error         */
@@ -366,7 +374,6 @@ typedef struct {
     uint8_t charge_main_minus;                       /*!< 0 -> no error, 1 -> error         */
     uint8_t charge_precharge;                        /*!< 0 -> no error, 1 -> error         */
     uint8_t interlock;                               /*!< 0 -> no error, 1 -> error         */
-    uint16_t contactor_feedback;                     /*!< 0 -> no error, 1 -> error         */
     uint8_t over_current_charge;                     /*!< 0 -> no error, 1 -> error         */
     uint8_t over_current_discharge;                  /*!< 0 -> no error, 1 -> error         */
     uint8_t over_voltage;                            /*!< 0 -> no error, 1 -> error         */
@@ -383,26 +390,51 @@ typedef struct {
     uint8_t can_cc_used;                             /*!< 0 -> not present, 1 -> present    */
     uint32_t timestamp;                              /*!< timestamp of database entry       */
     uint32_t previous_timestamp;                     /*!< timestamp of last database entry  */
-} DATA_BLOCK_SYSTEMSTATE_s;
-
+} DATA_BLOCK_ERRORSTATE_s;
 
 typedef struct {
-    int32_t movMean_current_1s;         /*!< current moving mean over the last 1s               */
-    int32_t movMean_current_5s;         /*!< current moving mean over the last 5s               */
-    int32_t movMean_current_10s;        /*!< current moving mean over the last 10s              */
-    int32_t movMean_current_30s;        /*!< current moving mean over the last 30s              */
-    int32_t movMean_current_60s;        /*!< current moving mean over the last 60s              */
-    int32_t movMean_current_config;     /*!< current moving mean over the last configured time  */
-    int32_t movMean_power_1s;           /*!< power moving mean over the last 1s                 */
-    int32_t movMean_power_5s;           /*!< power moving mean over the last 5s                 */
-    int32_t movMean_power_10s;          /*!< power moving mean over the last 10s                */
-    int32_t movMean_power_30s;          /*!< power moving mean over the last 30s                */
-    int32_t movMean_power_60s;          /*!< power moving mean over the last 60s                */
-    int32_t movMean_power_config;       /*!< power moving mean over the last configured time    */
+    float movMean_current_1s;         /*!< current moving mean over the last 1s               */
+    float movMean_current_5s;         /*!< current moving mean over the last 5s               */
+    float movMean_current_10s;        /*!< current moving mean over the last 10s              */
+    float movMean_current_30s;        /*!< current moving mean over the last 30s              */
+    float movMean_current_60s;        /*!< current moving mean over the last 60s              */
+    float movMean_current_config;     /*!< current moving mean over the last configured time  */
+    float movMean_power_1s;           /*!< power moving mean over the last 1s                 */
+    float movMean_power_5s;           /*!< power moving mean over the last 5s                 */
+    float movMean_power_10s;          /*!< power moving mean over the last 10s                */
+    float movMean_power_30s;          /*!< power moving mean over the last 30s                */
+    float movMean_power_60s;          /*!< power moving mean over the last 60s                */
+    float movMean_power_config;       /*!< power moving mean over the last configured time    */
     uint32_t timestamp;                 /*!< timestamp of database entry                        */
     uint32_t previous_timestamp;        /*!< timestamp of last database entry                   */
 } DATA_BLOCK_MOVING_MEAN_s;
 
+/**
+ * data block struct of contactor feedback
+ */
+typedef struct {
+    uint16_t contactor_feedback;                     /*!< feedback of contactors, without interlock */
+    uint32_t timestamp;                              /*!< timestamp of database entry       */
+    uint32_t previous_timestamp;                     /*!< timestamp of last database entry  */
+} DATA_BLOCK_CONTFEEDBACK_s;
+
+/**
+ * data block struct of interlock feedback
+ */
+typedef struct {
+    uint8_t interlock_feedback;                     /*!< feedback of interlock, without contactors */
+    uint32_t timestamp;                              /*!< timestamp of database entry       */
+    uint32_t previous_timestamp;                     /*!< timestamp of last database entry  */
+} DATA_BLOCK_ILCKFEEDBACK_s;
+
+/**
+ * data block struct of system state
+ */
+typedef struct {
+    uint8_t bms_state;                             /*!< system state (e.g., standby, normal) */
+    uint32_t timestamp;                              /*!< timestamp of database entry       */
+    uint32_t previous_timestamp;                     /*!< timestamp of last database entry  */
+} DATA_BLOCK_SYSTEMSTATE_s;
 
 /*================== Constant and Variable Definitions ====================*/
 

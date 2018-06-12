@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -31,8 +31,6 @@
  *
  */
 
-
-
 /*================== Includes =============================================*/
 /* recommended include order of header files:
  * 
@@ -43,6 +41,7 @@
  */
 #include "general.h"
 #include "appltask_cfg.h"
+
 #include "bms.h"
 #include "diag.h"
 #include "bal.h"
@@ -56,6 +55,9 @@
 /*================== Macros and Definitions ===============================*/
 
 /*================== Constant and Variable Definitions ====================*/
+BMS_Task_Definition_s appl_tskdef_cyclic_1ms    = {     0,      1,  OS_PRIORITY_NORMAL,        1024/4};
+BMS_Task_Definition_s appl_tskdef_cyclic_10ms   = {     4,     10,  OS_PRIORITY_BELOW_NORMAL,  1024/4};
+BMS_Task_Definition_s appl_tskdef_cyclic_100ms  = {    58,    100,  OS_PRIORITY_LOW,            512/4};
 
 static uint8_t io_initialized = FALSE;
 static uint8_t io_direction = 1;
@@ -64,44 +66,27 @@ static uint8_t io_cycle = 0;
 static uint8_t first_cycle = 0;
 static DATA_BLOCK_SLAVE_CONTROL_s example_slave_control;
 
-/**
- * predefined 1ms task for user code
- */
-BMS_Task_Definition_s appl_tskdef_1ms = { 0, 1, OS_PRIORITY_NORMAL,         1024/4 };
-
-/**
- * predefined 10ms task for user code
- */
-const BMS_Task_Definition_s appl_tskdef_10ms = { 4,   10, OS_PRIORITY_BELOW_NORMAL, 1024/4 };
-
-/**
- * predefined 100ms task for user code
- */
-BMS_Task_Definition_s appl_tskdef_100ms = { 58, 100, OS_PRIORITY_LOW,         512/4 };
-
 /*================== Function Prototypes ==================================*/
 
 /*================== Function Implementations =============================*/
-void APPL_Cyclic_1ms(void)
-{
+void APPL_Cyclic_1ms(void) {
+
     DIAG_SysMonNotify(DIAG_SYSMON_APPL_CYCLIC_1ms, 0);        // task is running, state = ok
 
     /* User specific implementations:   */
     /*   ...                            */
     /*   ...                            */
     BMS_Trigger();
-
 }
 
-void APPL_Cyclic_10ms(void)
-{
+void APPL_Cyclic_10ms(void) {
+
     DIAG_SysMonNotify(DIAG_SYSMON_APPL_CYCLIC_10ms, 0);        // task is running, state = ok
 
     /* User specific implementations:   */
     /*   ...                            */
     /*   ...                            */
     CANS_MainFunction();
-
     BAL_Trigger();
 
 #if BUILD_MODULE_ENABLE_SAFETY_FEATURES == 0
@@ -116,8 +101,7 @@ void APPL_Cyclic_10ms(void)
 #endif
 }
 
-void APPL_Cyclic_100ms(void)
-{
+void APPL_Cyclic_100ms(void) {
     uint8_t i;
     //uint8_t j; //used for DEMO only
 
@@ -136,12 +120,12 @@ void APPL_Cyclic_100ms(void)
     } else if (first_cycle == 10){
         /************************************************************
         //DEMO, write to external slave EEPROM, must NOT be done to often, or EEPROM will be worn out
-        DATA_GetTable(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+        DB_ReadBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
         example_slave_control.eeprom_write_address_to_use = 0x162;
         for (j=0; j<BS_NR_OF_MODULES; j++) {
             example_slave_control.eeprom_value_write[j] = 0x3E;
         }
-        DATA_StoreDataBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+        DB_WriteBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
         //MEAS_Request_EEPROM_Write();
         ************************************************************/
         first_cycle++;
@@ -173,7 +157,7 @@ void APPL_Cyclic_100ms(void)
 
         }
 
-        DATA_GetTable(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+        DB_ReadBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
         for (i=0; i<BS_NR_OF_MODULES; i++) {
             example_slave_control.io_value_out[i] = ~io_cycle;
         }
@@ -182,7 +166,7 @@ void APPL_Cyclic_100ms(void)
 
             /************************************************************
             //DEMO, write to port-expander
-            //DATA_StoreDataBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+            //DB_WriteBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
             //MEAS_Request_IO_Write();
             ************************************************************/
         }
@@ -208,7 +192,7 @@ void APPL_Cyclic_100ms(void)
             /************************************************************
             //DEMO, read from external slave EEPROM
             example_slave_control.eeprom_read_address_to_use = 0x162;
-            DATA_StoreDataBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
+            DB_WriteBlock(&example_slave_control, DATA_BLOCK_ID_SLAVE_CONTROL);
             //MEAS_Request_EEPROM_Read();
             ************************************************************/
 

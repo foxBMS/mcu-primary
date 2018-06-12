@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -35,6 +35,7 @@
 #define APPLTASK_CFG_H_
 
 
+
 /*================== Includes =============================================*/
 #include "general.h"
 #include "os.h"
@@ -44,46 +45,52 @@
 /*================== Constant and Variable Definitions ====================*/
 
 /**
- * Task configuration of the 1ms application task
-   @ingroup API_OS
+ * @brief   Task configuration of the 1ms application task
+ *
+ * @details Predefined 1ms task for user code
+ *
+ * @ingroup API_OS
  */
-extern BMS_Task_Definition_s appl_tskdef_1ms;
+extern BMS_Task_Definition_s appl_tskdef_cyclic_1ms;
 
 /**
- * Task configuration of the 10ms application task
-   @ingroup API_OS
+ * @brief   Task configuration of the 10ms application task
+ *
+ * @details Predefined 10ms task for user code
+ *
+ * @ingroup API_OS
  */
-extern const BMS_Task_Definition_s appl_tskdef_10ms;
+extern BMS_Task_Definition_s appl_tskdef_cyclic_10ms;
 
 /**
- * Task configuration of the 100ms application task
-    @ingroup API_OS
+ * @brief   Task configuration of the 100ms application task
+ *
+ * @details Predefined 100ms task for user code
+ *
+ * @ingroup API_OS
  */
-extern BMS_Task_Definition_s appl_tskdef_100ms;
+extern BMS_Task_Definition_s appl_tskdef_cyclic_100ms;
 
 /*================== Function Prototypes ==================================*/
 
 /**
  * @brief   user application task 1 milliseconds
-   @ingroup API_OS
  *
- * @return  void
+ * @ingroup API_OS
  */
 extern void APPL_Cyclic_1ms(void);
 
 /**
  * @brief   user application task 10 milliseconds
-   @ingroup API_OS
  *
- * @return  void
+ * @ingroup API_OS
  */
 extern void APPL_Cyclic_10ms(void);
 
 /**
  * @brief   user application task 100 milliseconds
-   @ingroup API_OS
  *
- * @return  void
+ * @ingroup API_OS
  */
 extern void APPL_Cyclic_100ms(void);
 

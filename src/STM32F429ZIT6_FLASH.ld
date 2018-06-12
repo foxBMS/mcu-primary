@@ -274,6 +274,7 @@ _jumpadressvectable = ORIGIN(FLASH) + 4;
   .ext_sdramsect_bss :
   {
       *sdram_cfg*(.bss*)
+      *(.EXT_SDRAMSection*)
   } >EXT_SDRAM
   
   /* Uninitialized data section */

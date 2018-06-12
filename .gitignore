@@ -5,3 +5,7 @@ build
 *.log
 .lock-waf_*
 waf-*-*
+
+# ignore some git files
+*.patch
+*.diff

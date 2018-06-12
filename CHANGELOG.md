@@ -1,5 +1,19 @@
 # foxBMS Change Log
 
+## Relase 1.1.0
+
+- uses now wafs feature of variant builds
+- baudrate of CAN0 and CAN1 can now be set independently
+- the setup of the tasks in engine and application layer is now consistent
+- updated license header
+- fixed a bug in contactor module to write unnecessary often into the database which caused a high cpuload
+- seperated database entries to prevent concurrent read/write requests to the database
+- added support of external SDRAM using keyword ``MEM_EXT_SDRAM``
+- moved sdram from common repository to primary repository
+- fixed a bug that closed the interlock for a short period of time after restart even if no CAN message was received to switch to STANDBY state
+- renamed database functions to `DB_WriteBlock()` and `DB_ReadBlock()`
+- updated README.md
+
 ## Release 1.0.2
 
 - fixed a bug in ISOGUARD module that caused a wrong insulation resistance to be transmitted via CAN if the measured insulation resistance was greater than 255kOhm

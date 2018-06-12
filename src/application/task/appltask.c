@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -67,82 +67,70 @@ static xTaskHandle appl_handle_tsk_100ms;
 
 /*================== Function Implementations =============================*/
 
-void APPL_CreateMutex(void) {
-
-}
-
-void APPL_CreateEvent(void) {
-
-}
-
 void APPL_CreateTask(void) {
     // Cyclic Task 1ms
-    osThreadDef(APPL_TSK_Cyclic_1ms, (os_pthread )APPL_TSK_Cyclic_1ms,
-            appl_tskdef_1ms.Priority, 0, appl_tskdef_1ms.Stacksize);
+    osThreadDef(APPL_TSK_Cyclic_1ms, (os_pthread) APPL_TSK_Cyclic_1ms,
+            appl_tskdef_cyclic_1ms.Priority, 0, appl_tskdef_cyclic_1ms.Stacksize);
     appl_handle_tsk_1ms = osThreadCreate(osThread(APPL_TSK_Cyclic_1ms), NULL);
 
     // Cyclic Task 10ms
-    osThreadDef(APPL_TSK_Cyclic_10ms, (os_pthread )APPL_TSK_Cyclic_10ms,
-            appl_tskdef_10ms.Priority, 0, appl_tskdef_10ms.Stacksize);
+    osThreadDef(APPL_TSK_Cyclic_10ms, (os_pthread) APPL_TSK_Cyclic_10ms,
+            appl_tskdef_cyclic_10ms.Priority, 0, appl_tskdef_cyclic_10ms.Stacksize);
     appl_handle_tsk_10ms = osThreadCreate(osThread(APPL_TSK_Cyclic_10ms), NULL);
 
     // Cyclic Task 100ms
-    osThreadDef(APPL_TSK_Cyclic_100ms, (os_pthread )APPL_TSK_Cyclic_100ms,
-            appl_tskdef_100ms.Priority, 0, appl_tskdef_100ms.Stacksize);
+    osThreadDef(APPL_TSK_Cyclic_100ms, (os_pthread) APPL_TSK_Cyclic_100ms,
+            appl_tskdef_cyclic_100ms.Priority, 0, appl_tskdef_cyclic_100ms.Stacksize);
     appl_handle_tsk_100ms = osThreadCreate(osThread(APPL_TSK_Cyclic_100ms), NULL);
+}
 
+void APPL_CreateMutex(void) {
+}
+
+void APPL_CreateEvent(void) {
+}
+
+void APPL_CreateQueues(void) {
 }
 
 void APPL_TSK_Cyclic_1ms(void) {
-    while (os_boot != OS_SYSTEM_RUNNING)
-    {
+    while (os_boot != OS_SYSTEM_RUNNING) {
         ;
     }
 
-    osDelayUntil(&os_schedulerstarttime, appl_tskdef_1ms.Phase);
+    osDelayUntil(&os_schedulerstarttime, appl_tskdef_cyclic_1ms.Phase);
 
-    while(1)
-    {
+    while (1) {
         uint32_t currentTime = osKernelSysTick();
-
         APPL_Cyclic_1ms();
-
-        osDelayUntil(&currentTime, appl_tskdef_1ms.CycleTime);
+        osDelayUntil(&currentTime, appl_tskdef_cyclic_1ms.CycleTime);
     }
 }
 
 void APPL_TSK_Cyclic_10ms(void) {
-    while (os_boot != OS_SYSTEM_RUNNING)
-    {
+    while (os_boot != OS_SYSTEM_RUNNING) {
         ;
     }
 
-    osDelayUntil(&os_schedulerstarttime, appl_tskdef_10ms.Phase);
+    osDelayUntil(&os_schedulerstarttime, appl_tskdef_cyclic_10ms.Phase);
 
-    while(1)
-    {
+    while (1) {
         uint32_t currentTime = osKernelSysTick();
-
         APPL_Cyclic_10ms();
-
-        osDelayUntil(&currentTime, appl_tskdef_10ms.CycleTime);
+        osDelayUntil(&currentTime, appl_tskdef_cyclic_10ms.CycleTime);
     }
 }
 
 void APPL_TSK_Cyclic_100ms(void) {
-    while (os_boot != OS_SYSTEM_RUNNING)
-    {
+    while (os_boot != OS_SYSTEM_RUNNING) {
         ;
     }
 
-    osDelayUntil(&os_schedulerstarttime, appl_tskdef_100ms.Phase);
+    osDelayUntil(&os_schedulerstarttime, appl_tskdef_cyclic_100ms.Phase);
 
-    while(1)
-    {
+    while (1) {
         uint32_t currentTime = osKernelSysTick();
-
         APPL_Cyclic_100ms();
-
-        osDelayUntil(&currentTime, appl_tskdef_100ms.CycleTime);
+        osDelayUntil(&currentTime, appl_tskdef_cyclic_100ms.CycleTime);
     }
 }

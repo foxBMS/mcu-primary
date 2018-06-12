@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -89,7 +89,7 @@ static CONT_STATE_s cont_state = {
     .lastsubstate           = 0,
     .triggerentry           = 0,
     .ErrRequestCounter      = 0,
-    .OscillationCounter           = 0,
+    .OscillationCounter     = 0,
     .PrechargeTryCounter    = 0,
     .PrechargeTimeOut       = 0,
     .counter                = 0,
@@ -177,7 +177,7 @@ STD_RETURN_TYPE_e CONT_SetContactorState(CONT_NAMES_e contactor, CONT_ELECTRICAL
         }
     }
     else if(requestedContactorState  ==  CONT_SWITCH_OFF) {
-        DATA_GetTable(&cont_current_tab, DATA_BLOCK_ID_CURRENT);
+        DB_ReadBlock(&cont_current_tab, DATA_BLOCK_ID_CURRENT);
         float currentAtSwitchOff = cont_current_tab.current;
         if ( ((BAD_SWITCHOFF_CURRENT_POS < currentAtSwitchOff) && (0 < currentAtSwitchOff)) ||
              ((BAD_SWITCHOFF_CURRENT_NEG > currentAtSwitchOff) && (0 > currentAtSwitchOff))) {
@@ -405,12 +405,22 @@ void CONT_Trigger(void) {
     if(cont_state.OscillationCounter>0) {
         cont_state.OscillationCounter--;
     }
-    if(cont_state.PrechargeTimeOut>0) {
-        cont_state.PrechargeTimeOut--;
+
+    if(cont_state.PrechargeTimeOut > 0) {
+        if(cont_state.PrechargeTimeOut > CONT_TASK_CYCLE_CONTEXT_MS) {
+            cont_state.PrechargeTimeOut -= CONT_TASK_CYCLE_CONTEXT_MS;
+        } else {
+            cont_state.PrechargeTimeOut = 0;
+        }
     }
 
     if(cont_state.timer) {
-        if(--cont_state.timer) {
+        if (cont_state.timer > CONT_TASK_CYCLE_CONTEXT_MS) {
+            cont_state.timer -= CONT_TASK_CYCLE_CONTEXT_MS;
+        } else {
+            cont_state.timer = 0;
+        }
+        if(cont_state.timer) {
             cont_state.triggerentry--;
             return;    // handle state machine only if timer has elapsed
         }
@@ -827,11 +837,11 @@ void CONT_Trigger(void) {
  * @details makes a DIAG entry for each contactor when the feedback does not match the set value
  */
 void CONT_CheckFeedback(void) {
-    DATA_BLOCK_SYSTEMSTATE_s systemstate_tab;
+    DATA_BLOCK_CONTFEEDBACK_s contfeedback_tab;
     CONT_ELECTRICAL_STATE_TYPE_s feedback;
     uint16_t contactor_feedback_state = 0;
 
-    DATA_GetTable(&systemstate_tab, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_ReadBlock(&contfeedback_tab, DATA_BLOCK_ID_CONTFEEDBACK);
 
     for (CONT_NAMES_e i = 0; i < (CONT_NAMES_e) cont_contactors_config_length; i++) {
         feedback = CONT_GetContactorFeedback(i);
@@ -861,9 +871,8 @@ void CONT_CheckFeedback(void) {
                 break;
         }
 
-        systemstate_tab.contactor_feedback &= (~0x3F);
-        systemstate_tab.contactor_feedback |= contactor_feedback_state;
-        DATA_StoreDataBlock(&systemstate_tab, DATA_BLOCK_ID_SYSTEMSTATE);
+        contfeedback_tab.contactor_feedback &= (~0x3F);
+        contfeedback_tab.contactor_feedback |= contactor_feedback_state;
 
         if (feedback != CONT_GetContactorSetValue(i) ) {
 
@@ -919,6 +928,8 @@ void CONT_CheckFeedback(void) {
             }
         }
     }
+
+    DB_WriteBlock(&contfeedback_tab, DATA_BLOCK_ID_CONTFEEDBACK);
 }
 
 
@@ -931,7 +942,7 @@ static STD_RETURN_TYPE_e CONT_CheckVoltages(void) {
     DATA_BLOCK_CURRENT_s current_tab = {0};
     STD_RETURN_TYPE_e retVal = E_NOT_OK;
 
-    DATA_GetTable(&current_tab, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&current_tab, DATA_BLOCK_ID_CURRENT);
     float cont_precharge_threshold = 0.0;
     float current = 0.0;
 

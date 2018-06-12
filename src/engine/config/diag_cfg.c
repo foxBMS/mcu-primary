@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -87,255 +87,255 @@ void dummyfu(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 
 void DIAG_error_overvoltage(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.over_voltage = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.over_voltage = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_undervoltage(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.under_voltage = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.under_voltage = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_overtemperaturecharge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.over_temperature_charge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.over_temperature_charge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_overtemperaturedischarge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.over_temperature_discharge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.over_temperature_discharge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_undertemperaturecharge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.under_temperature_charge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.under_temperature_charge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_undertemperaturedischarge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.under_temperature_discharge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.under_temperature_discharge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_overcurrentcharge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.over_current_charge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.over_current_charge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_overcurrentdischarge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.over_current_discharge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.over_current_discharge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_cantiming(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.can_timing = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.can_timing = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_cantiming_cc(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.can_timing_cc = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.can_timing_cc = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_cancurrentsensor(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.currentsensorresponding = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.currentsensorresponding = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_ltcpec(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.crc_error = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.crc_error = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_ltcmux(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.mux_error = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.mux_error = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_ltcspi(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.spi_error = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.spi_error = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_contactormainplus(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.main_plus = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.main_plus = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_contactormainminus(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.main_minus = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.main_minus = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_contactorprecharge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.precharge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.precharge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_contactorchargemainplus(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.charge_main_plus = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.charge_main_plus = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_contactorchargemainminus(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.charge_main_minus = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.charge_main_minus = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_contactorchargeprecharge(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.charge_precharge = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.charge_precharge = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 void DIAG_error_interlock(DIAG_CH_ID_e ch_id, DIAG_EVENT_e event)
 {
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     if(event==DIAG_EVENT_RESET){
         error_flags.interlock = 0;
     }
     if(event==DIAG_EVENT_NOK){
         error_flags.interlock = 1;
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 }
 
 /**

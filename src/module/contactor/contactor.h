@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -166,8 +166,8 @@ typedef enum {
  * Possible return values when state requests are made to the CONT statemachine
  */
 typedef enum {
-    CONT_OK                                 = 0,    /*!< CONT --> ok                             */
-    CONT_BUSY_OK                            = 1,    /*!< CONT under load --> ok                  */
+    CONT_OK                                 = 0,    /*!< CONT --> ok                            */
+    CONT_BUSY_OK                            = 1,    /*!< CONT under load --> ok                 */
     CONT_REQUEST_PENDING                    = 2,    /*!< requested to be executed               */
     CONT_REQUEST_IMPOSSIBLE                 = 3,    /*!< requested not possible                 */
     CONT_ILLEGAL_REQUEST                    = 4,    /*!< Request can not be executed            */
@@ -183,18 +183,18 @@ typedef enum {
  * The user can get the current state of the CONT state machine with this variable
  */
 typedef struct {
-    uint16_t timer;                         /*!< time in ms before the state machine processes the next state, e.g. in counts of 1ms    */
+    uint16_t timer;                          /*!< time in ms before the state machine processes the next state, e.g. in counts of 1ms    */
     CONT_STATE_REQUEST_e statereq;           /*!< current state request made to the state machine                                        */
     CONT_STATEMACH_e state;                  /*!< state of Driver State Machine                                                          */
-    uint8_t substate;                       /*!< current substate of the state machine                                                  */
+    CONT_STATEMACH_SUB_e substate;           /*!< current substate of the state machine                                                  */
     CONT_STATEMACH_e laststate;              /*!< previous state of the state machine                                                    */
-    uint8_t lastsubstate;                   /*!< previous substate of the state machine                                                 */
-    uint32_t ErrRequestCounter;             /*!< counts the number of illegal requests to the LTC state machine */
-    uint16_t OscillationCounter;                   /*!< timeout to prevent oscillation of contactors */
-    uint8_t PrechargeTryCounter;                   /*!< timeout to prevent oscillation of contactors */
-    uint16_t PrechargeTimeOut;                   /*!< time to wait when precharge has been closed for voltages to settle */
-    uint8_t triggerentry;                   /*!< counter for re-entrance protection (function running flag) */
-    uint8_t counter;                        /*!< general purpose counter */
+    CONT_STATEMACH_SUB_e lastsubstate;       /*!< previous substate of the state machine                                                 */
+    uint32_t ErrRequestCounter;              /*!< counts the number of illegal requests to the LTC state machine    */
+    uint16_t OscillationCounter;             /*!< timeout to prevent oscillation of contactors */
+    uint8_t PrechargeTryCounter;             /*!< timeout to prevent oscillation of contactors */
+    uint16_t PrechargeTimeOut;               /*!< time to wait when precharge has been closed for voltages to settle */
+    uint8_t triggerentry;                    /*!< counter for re-entrance protection (function running flag) */
+    uint8_t counter;                         /*!< general purpose counter */
 } CONT_STATE_s;
 
 /*================== Function Prototypes ==================================*/

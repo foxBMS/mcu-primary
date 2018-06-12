@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -142,6 +142,8 @@ extern EventGroupHandle_t ENG_Events[];
 extern osMutexId APPL_Mutexes[];
 extern EventGroupHandle_t APPL_Events[];
 
+extern uint8_t eng_init;
+
 /*================== Function Prototypes ==================================*/
 
 /**
@@ -176,73 +178,6 @@ extern void vApplicationIdleHook(void);
 extern void OS_PostOSInit(void);
 
 /**
- * @brief   Database-Task
- * The task manages the data exchange with the database and
- * must have a higher task priority than any task using the database
- *
- * @return  void
- */
-extern void OS_TSK_Engine(void);
-
-/**
- * @brief   cyclic 1ms-Task, preemptive with TSK_Cyclic_10ms() and TSK_Cyclic_100ms().
- *
- * The Task calls OsStartUp() in the very beginning, this is the first active Task.
- * Then the Task is delayed by a phase as defined in eng_tskdef_cyclic_1ms.Phase (in milliseconds).
- * After the phase delay, the cyclic execution starts, the entry time is saved in currentTime.
- * After one cycle, the Task is set to sleep until entry time + eng_tskdef_cyclic_1ms.CycleTime (in milliseconds).
- * The Task calls Job_1ms(), Job_2ms() and Job_5ms().
- *
- * @return  void
- */
-extern void OS_TSK_Cyclic_1ms(void);
-
-/**
- * @brief   cyclic 10ms-Task, preemptive with TSK_Cyclic_1ms() and TSK_Cyclic_100ms().
- *
- * Task is delayed by a phase as defined in eng_tskdef_cyclic_10ms.Phase (in milliseconds).
- * After the phase delay, the cyclic execution starts, the entry time is saved in currentTime.
- * After one cycle, the Task is set to sleep until entry time + eng_tskdef_cyclic_10ms.CycleTime (in milliseconds).
- * The task calls Job_10ms() and Job_50ms().
- *
- * @return  void
- */
-extern void OS_TSK_Cyclic_10ms(void);
-
-/**
- * @brief   cyclic 100ms-Task, preemptive with TSK_Cyclic_1ms() and TSK_Cyclic_10ms().
- *
- * Task is delayed by a phase as defined in eng_tskdef_cyclic_100ms.Phase (in milliseconds).
- * After the phase delay, the cyclic execution starts, the entry time is saved in currentTime.
- * After one cycle, the Task is set to sleep until entry time + eng_tskdef_cyclic_100ms.CycleTime (in milliseconds).
- * The task calls Job_100ms(), Job_500ms() and Job_1s().
- *
- * @return   void
- */
-extern void OS_TSK_Cyclic_100ms(void);
-
-
-/**
- * @brief   cyclic and event driven handler.
- *
- * Task configurations (cycle and delay time) are specified by eng_tskdef_eventhandler.
- *
- * @return   void
- */
-extern void OS_TSK_EventHandler(void);
-
-
-/**
- * @brief   cyclic diagnosis task.
- *
- * Task configurations (cycle and delay time) are specified by eng_tskdef_diagnosis.
- *
- * @return   void
- */
-extern void OS_TSK_Diagnosis(void);
-
-
-/**
  * @brief  auxiliary function to distinguish OS Task from an ISR
  *
  * checks the function context: task (thread) mode or interrupt (handler) mode
@@ -272,6 +207,15 @@ extern void OS_TaskEnter_Critical(void);
  * @return  void
  */
 extern void OS_TaskExit_Critical(void);
+
+/**
+ * @brief   increments the system timer os_timer
+ *
+ * The os_timer is a runtime-counter, counting the time since the last reset.
+ *
+ * @return  void
+ */
+extern void OS_TimerTrigger(void);
 /*================== Function Implementations =============================*/
 
 #endif /* OS_H_ */

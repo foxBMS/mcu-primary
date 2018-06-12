@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
  * @prefix  APPL
  *
  * @brief   Header for external functions of the application tasks
+ *
  */
 
 #ifndef APPLTASK_H_
@@ -62,6 +63,13 @@ extern void APPL_CreateMutex(void);
  * @return  void
  */
 extern void APPL_CreateEvent(void);
+
+/**
+ * @brief   creates queues, called before scheduler start
+ *
+ * @return  void
+ */
+extern void APPL_CreateQueues(void);
 
 /**
  * @brief   1ms application task

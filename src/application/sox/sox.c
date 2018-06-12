@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -62,7 +62,7 @@ static DATA_BLOCK_CELLVOLTAGE_s cellvoltage;
 static DATA_BLOCK_CELLTEMPERATURE_s celltemperature;
 static DATA_BLOCK_MINMAX_s cellminmax;
 static DATA_BLOCK_SOX_s sox;
-static DATA_BLOCK_SYSTEMSTATE_s systemstatetab;
+static DATA_BLOCK_CONTFEEDBACK_s contfeedbacktab;
 
 static SOX_SOF_s values_sof;
 static uint32_t soc_previous_current_timestamp = 0;
@@ -106,11 +106,11 @@ static float SOF_MinimumOfThreeValues (float value1,float value2, float value3);
 
 void SOC_Init(uint8_t cc_present) {
     SOX_SOC_s soc = {50.0, 50.0, 50.0};
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
+    DATA_BLOCK_ERRORSTATE_s error_flags;
 
 
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
-    DATA_GetTable(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
+    DB_ReadBlock(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
     NVM_Get_soc(&soc);
 
     if (cc_present == TRUE) {
@@ -146,8 +146,8 @@ void SOC_Init(uint8_t cc_present) {
         sox_state.sensor_cc_used = FALSE;
 
     }
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
-    DATA_StoreDataBlock(&sox, DATA_BLOCK_ID_SOX);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
+    DB_WriteBlock(&sox, DATA_BLOCK_ID_SOX);
 }
 
 void SOC_SetValue(float soc_value_min, float soc_value_max, float soc_value_mean) {
@@ -187,11 +187,11 @@ void SOC_SetValue(float soc_value_min, float soc_value_max, float soc_value_mean
         sox.timestamp = 0;
         sox.previous_timestamp = 0;
 
-        DATA_StoreDataBlock(&sox,DATA_BLOCK_ID_SOX);
+        DB_WriteBlock(&sox,DATA_BLOCK_ID_SOX);
 
     }
     else {
-        DATA_GetTable(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
+        DB_ReadBlock(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
         soc.mean = soc_value_mean;
         soc.min = soc_value_min;
         soc.max = soc_value_max;
@@ -212,7 +212,7 @@ void SOC_SetValue(float soc_value_min, float soc_value_max, float soc_value_mean
         if (sox.soc_max > 100.0)  { sox.soc_max = 100.0;  }
         if (sox.soc_max < 0.0)    { sox.soc_max = 0.0;    }
         NVM_Set_soc(&soc);
-        DATA_StoreDataBlock(&sox,DATA_BLOCK_ID_SOX);
+        DB_WriteBlock(&sox,DATA_BLOCK_ID_SOX);
     }
 }
 
@@ -222,8 +222,8 @@ void SOC_Set_Lookup_Table(void) {
     float soc_max = 50.0;
     float soc_mean = 50.0;
 
-    DATA_GetTable(&cellminmax, DATA_BLOCK_ID_MINMAX);
-    DATA_GetTable(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&cellminmax, DATA_BLOCK_ID_MINMAX);
+    DB_ReadBlock(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
 
     soc_mean = SOC_GetFromVoltage((float)(cellminmax.voltage_mean));
     soc_min = SOC_GetFromVoltage((float)(cellminmax.voltage_min));
@@ -248,7 +248,7 @@ void SOC_Ctrl(void) {
     float deltaSOC = 0.0;
 
     if (sox_state.sensor_cc_used == FALSE) {
-        DATA_GetTable(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
+        DB_ReadBlock(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
 
         timestamp = sox_current_tab.timestamp;
         previous_timestamp = sox_current_tab.previous_timestamp;
@@ -283,7 +283,7 @@ void SOC_Ctrl(void) {
                 sox.state++;
                 sox.previous_timestamp = previous_timestamp;
                 sox.timestamp = timestamp;  // soc timestamp is current(I) timestamp
-                DATA_StoreDataBlock(&sox, DATA_BLOCK_ID_SOX);
+                DB_WriteBlock(&sox, DATA_BLOCK_ID_SOX);
 
             }
         } // end check if current measurement has been updated
@@ -293,13 +293,13 @@ void SOC_Ctrl(void) {
     }
     else {
 
-        DATA_GetTable(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
+        DB_ReadBlock(&sox_current_tab, DATA_BLOCK_ID_CURRENT);
 
         timestamp_cc = sox_current_tab.timestamp_cc;
         previous_timestamp_cc = sox_current_tab.previous_timestamp_cc;
 
         if (soc_previous_current_timestamp != timestamp) { // check if current measurement has been updated
-            DATA_GetTable(&cans_current_tab,DATA_BLOCK_ID_CURRENT);
+            DB_ReadBlock(&cans_current_tab,DATA_BLOCK_ID_CURRENT);
 
             if (POSITIVE_DISCHARGE_CURRENT == TRUE) {
                 sox.soc_mean = sox_state.cc_scaling - 100.0*cans_current_tab.current_counter/(3600.0*(SOX_CELL_CAPACITY/1000.0));
@@ -322,7 +322,7 @@ void SOC_Ctrl(void) {
             sox.state++;
             sox.previous_timestamp = previous_timestamp;
             sox.timestamp = timestamp;  // soc timestamp is current(I) timestamp
-            DATA_StoreDataBlock(&sox, DATA_BLOCK_ID_SOX);
+            DB_WriteBlock(&sox, DATA_BLOCK_ID_SOX);
         }
         soc_previous_current_timestamp_cc = sox_current_tab.timestamp_cc;
     }
@@ -355,16 +355,16 @@ void SOF_Init(void) {
 }
 
 void SOF_Ctrl(void) {
-    DATA_GetTable(&cellvoltage, DATA_BLOCK_ID_CELLVOLTAGE);
-    DATA_GetTable(&celltemperature, DATA_BLOCK_ID_CELLTEMPERATURE);
-    DATA_GetTable(&cellminmax, DATA_BLOCK_ID_MINMAX);
-    DATA_GetTable(&sox,DATA_BLOCK_ID_SOX);
-    DATA_GetTable(&systemstatetab, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_ReadBlock(&cellvoltage, DATA_BLOCK_ID_CELLVOLTAGE);
+    DB_ReadBlock(&celltemperature, DATA_BLOCK_ID_CELLTEMPERATURE);
+    DB_ReadBlock(&cellminmax, DATA_BLOCK_ID_MINMAX);
+    DB_ReadBlock(&sox,DATA_BLOCK_ID_SOX);
+    DB_ReadBlock(&contfeedbacktab, DATA_BLOCK_ID_CONTFEEDBACK);
     // if Contactor MainPlus and MainMinus are not closed (when they are closed, state_feedback is 0x0C)
 #if BS_SEPARATE_POWERLINES == 1
-    if ( ! ( (systemstatetab.contactor_feedback & 0x3F) == 0x28 || (systemstatetab.contactor_feedback & 0x3F) == 0x05) ){
+    if ( ! ( (contfeedbacktab.contactor_feedback & 0x3F) == 0x28 || (contfeedbacktab.contactor_feedback & 0x3F) == 0x05) ){
 #else
-    if ( (systemstatetab.contactor_feedback & 0x3F) != 0x05){
+    if ( (contfeedbacktab.contactor_feedback & 0x3F) != 0x05){
 #endif // BS_SEPARATE_POWERLINES == 1
         sox.sof_continuous_charge = 0.0;
         sox.sof_continuous_discharge = 0.0;
@@ -377,7 +377,7 @@ void SOF_Ctrl(void) {
         sox.sof_peak_charge = values_sof.current_Charge_peak_max;
         sox.sof_peak_discharge = values_sof.current_Discha_peak_max;
     }
-    DATA_StoreDataBlock(&sox, DATA_BLOCK_ID_SOX);
+    DB_WriteBlock(&sox, DATA_BLOCK_ID_SOX);
 }
 
 /**
