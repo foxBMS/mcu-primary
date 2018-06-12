@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -48,7 +48,7 @@ BS_CURRENT_DIRECTION_e BS_CheckCurrent_Direction(void) {
     BS_CURRENT_DIRECTION_e retVal = BS_CURRENT_DISCHARGE;
     DATA_BLOCK_CURRENT_s current_tab = {0};
 
-    DATA_GetTable(&current_tab, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&current_tab, DATA_BLOCK_ID_CURRENT);
 
     if (POSITIVE_DISCHARGE_CURRENT == TRUE){
         if (current_tab.current >= 0) {

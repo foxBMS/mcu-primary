@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -239,7 +239,7 @@ void BMS_Trigger(void) {
             BMS_SAVELASTSTATES();
             // CONT_SetStateRequest(CONT_STATE_INIT_REQUEST);
 
-            bms_state.timer = BMS_STATEMACH_SHORTTIME_MS;
+            bms_state.timer = BMS_STATEMACH_LONGTIME_MS;
             bms_state.state = BMS_STATEMACH_INITIALIZED;
             bms_state.substate = BMS_ENTRY;
 
@@ -258,9 +258,9 @@ void BMS_Trigger(void) {
             BMS_SAVELASTSTATES();
 
             if (bms_state.substate == BMS_ENTRY) {
-                DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 systemstate.bms_state = BMS_STATEMACH_IDLE;
-                DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 bms_state.timer = BMS_STATEMACH_SHORTTIME_MS;
                 bms_state.substate = BMS_CHECK_ERROR_FLAGS;
                 break;
@@ -311,9 +311,9 @@ void BMS_Trigger(void) {
                 }
                 bms_state.timer = BMS_STATEMACH_MEDIUMTIME_MS;
                 bms_state.substate = BMS_CHECK_ERROR_FLAGS_INTERLOCK;
-                DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 systemstate.bms_state = BMS_STATEMACH_STANDBY;
-                DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 break;
             } else if (bms_state.substate == BMS_CHECK_ERROR_FLAGS_INTERLOCK) {
                 if (BMS_CheckAnyErrorFlagSet() == E_NOT_OK) {
@@ -381,9 +381,9 @@ void BMS_Trigger(void) {
             BMS_SAVELASTSTATES();
 
             if (bms_state.substate == BMS_ENTRY) {
-                DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 systemstate.bms_state = BMS_STATEMACH_PRECHARGE;
-                DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 bal_request = BMS_CheckBalancingRequests();
                 if (bal_request == BMS_BAL_INACTIVE_OVERRIDE) {
                     BAL_SetStateRequest(BAL_STATE_INACTIVE_OVERRIDE_REQUEST);
@@ -459,9 +459,9 @@ void BMS_Trigger(void) {
         case BMS_STATEMACH_NORMAL:
             BMS_SAVELASTSTATES();
             if (bms_state.substate == BMS_ENTRY) {
-                DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 systemstate.bms_state = BMS_STATEMACH_NORMAL;
-                DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 bms_state.timer = BMS_STATEMACH_SHORTTIME_MS;
                 bms_state.substate = BMS_CHECK_ERROR_FLAGS;
                 break;
@@ -509,9 +509,9 @@ void BMS_Trigger(void) {
                 BMS_SAVELASTSTATES();
 
                 if (bms_state.substate == BMS_ENTRY){
-                    DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                    DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                     systemstate.bms_state = BMS_STATEMACH_CHARGE_PRECHARGE;
-                    DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                    DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                     bal_request = BMS_CheckBalancingRequests();
                     if (bal_request == BMS_BAL_INACTIVE_OVERRIDE) {
                         BAL_SetStateRequest(BAL_STATE_INACTIVE_OVERRIDE_REQUEST);
@@ -594,9 +594,9 @@ void BMS_Trigger(void) {
                 BMS_SAVELASTSTATES();
 
                 if (bms_state.substate == BMS_ENTRY){
-                    DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                    DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                     systemstate.bms_state = BMS_STATEMACH_CHARGE;
-                    DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                    DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                     bms_state.timer = BMS_STATEMACH_SHORTTIME_MS;
                     bms_state.substate = BMS_CHECK_ERROR_FLAGS;
                     break;
@@ -648,9 +648,9 @@ void BMS_Trigger(void) {
                 CONT_SetStateRequest(CONT_STATE_ERROR_REQUEST);
                 bms_state.timer = BMS_STATEMACH_MEDIUMTIME_MS;
                 bms_state.substate = BMS_OPEN_INTERLOCK;
-                DATA_GetTable(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_ReadBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 systemstate.bms_state = BMS_STATEMACH_ERROR;
-                DATA_StoreDataBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_WriteBlock(&systemstate, DATA_BLOCK_ID_SYSTEMSTATE);
                 break;
             } else if (bms_state.substate == BMS_OPEN_INTERLOCK) {
                 ILCK_SetStateRequest(ILCK_STATE_OPEN_REQUEST);
@@ -709,7 +709,7 @@ static uint8_t BMS_CheckCANRequests(void) {
     uint8_t retVal = BMS_REQ_ID_NOREQ;
     DATA_BLOCK_STATEREQUEST_s request;
 
-    DATA_GetTable(&request, DATA_BLOCK_ID_STATEREQUEST);
+    DB_ReadBlock(&request, DATA_BLOCK_ID_STATEREQUEST);
 
     if (request.state_request == BMS_REQ_ID_STANDBY) {
         retVal = BMS_REQ_ID_STANDBY;
@@ -736,7 +736,7 @@ static uint8_t BMS_CheckBalancingRequests(void) {
     uint8_t retVal = BMS_REQ_ID_NOREQ;
     DATA_BLOCK_BALANCING_CONTROL_s bal_request;
 
-    DATA_GetTable(&bal_request, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_ReadBlock(&bal_request, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
 
     if (bal_request.request == BMS_BAL_INACTIVE_OVERRIDE) {
         retVal = BMS_BAL_INACTIVE_OVERRIDE;
@@ -749,7 +749,7 @@ static uint8_t BMS_CheckBalancingRequests(void) {
     }
 
     bal_request.request = BMS_BAL_NO_REQUEST;
-    DATA_StoreDataBlock(&bal_request, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_WriteBlock(&bal_request, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
 
     return retVal;
 }
@@ -763,7 +763,7 @@ static uint8_t BMS_CheckBalancingRequests(void) {
 static void BMS_CheckVoltages(void) {
     DATA_BLOCK_MINMAX_s minmax;
 
-    DATA_GetTable(&minmax, DATA_BLOCK_ID_MINMAX);
+    DB_ReadBlock(&minmax, DATA_BLOCK_ID_MINMAX);
 
     if (minmax.voltage_max > BC_VOLTMAX) {
         DIAG_Handler(DIAG_CH_CELLVOLTAGE_OVERVOLTAGE, DIAG_EVENT_NOK, 0, NULL_PTR);
@@ -788,8 +788,8 @@ static void BMS_CheckTemperatures(void) {
     DATA_BLOCK_MINMAX_s minmax;
     DATA_BLOCK_CURRENT_s curr_tab;
 
-    DATA_GetTable(&curr_tab, DATA_BLOCK_ID_CURRENT);
-    DATA_GetTable(&minmax, DATA_BLOCK_ID_MINMAX);
+    DB_ReadBlock(&curr_tab, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&minmax, DATA_BLOCK_ID_MINMAX);
 
     if (BS_CheckCurrentValue_Direction(curr_tab.current) == BS_CURRENT_DISCHARGE){
         if (minmax.temperature_max > BC_TEMPMAX_DISCHARGE) {
@@ -833,8 +833,8 @@ static void BMS_CheckCurrent(void) {
     DATA_BLOCK_SOX_s sof_tab;
     DATA_BLOCK_CURRENT_s curr_tab;
 
-    DATA_GetTable(&sof_tab, DATA_BLOCK_ID_SOX);
-    DATA_GetTable(&curr_tab, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&sof_tab, DATA_BLOCK_ID_SOX);
+    DB_ReadBlock(&curr_tab, DATA_BLOCK_ID_CURRENT);
 
 #if MEAS_TEST_CELL_SOF_LIMITS == TRUE
     if (((curr_tab.current < (-1000*(sof_tab.sof_continuous_charge))) ||
@@ -874,9 +874,9 @@ static void BMS_CheckCurrent(void) {
  */
 static STD_RETURN_TYPE_e BMS_CheckAnyErrorFlagSet(void) {
     STD_RETURN_TYPE_e retVal = E_NOT_OK;
-    DATA_BLOCK_SYSTEMSTATE_s error_flags;
+    DATA_BLOCK_ERRORSTATE_s error_flags;
 
-    DATA_GetTable(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
 
     if (error_flags.main_plus                   == 1 ||
         error_flags.main_minus                  == 1 ||
@@ -907,6 +907,6 @@ static STD_RETURN_TYPE_e BMS_CheckAnyErrorFlagSet(void) {
         error_flags.general_error = 0;
     }
 
-    DATA_StoreDataBlock(&error_flags, DATA_BLOCK_ID_SYSTEMSTATE);
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
     return retVal;
 }

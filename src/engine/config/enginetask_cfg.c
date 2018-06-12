@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -28,7 +28,7 @@
  * @prefix  ENG
  *
  * @brief   Engine task configuration
- * FIXME file description
+ *
  */
 
 /*================== Includes =============================================*/
@@ -43,102 +43,127 @@
 #include "enginetask_cfg.h"
 
 #include "database.h"
-
+#include "meas.h"
+#include "ltc.h"
+#include "sys.h"
+#include "bms.h"
+#include "interlock.h"
+#include "contactor.h"
+#include "can.h"
+#include "cansignal.h"
+#include "isoguard.h"
+#include "wdg.h"
+#include "bal.h"
+#include "intermcu.h"
+#include "adc_ex.h"
 /*================== Macros and Definitions ===============================*/
 
 /*================== Constant and Variable Definitions ====================*/
-BMS_Task_Definition_s eng_tskdef_cyclic_1ms   = {0, 1, OS_PRIORITY_ABOVE_HIGH, 1024 / 4};
-BMS_Task_Definition_s eng_tskdef_cyclic_10ms  = {2, 10, OS_PRIORITY_HIGH, 1024 / 4};
-BMS_Task_Definition_s eng_tskdef_cyclic_100ms = {56, 100, OS_PRIORITY_ABOVE_NORMAL, 1024 / 4};
-BMS_Task_Definition_s eng_tskdef_eventhandler    = {0, 1, OS_PRIORITY_VERY_HIGH, 1024 / 4};
-BMS_Task_Definition_s eng_tskdef_diagnosis       = {0, 1, OS_PRIORITY_BELOW_REALTIME, 1024 / 4};
+BMS_Task_Definition_s eng_tskdef_cyclic_1ms     = { 0,      1,  OS_PRIORITY_ABOVE_HIGH,        1024/4};
+BMS_Task_Definition_s eng_tskdef_cyclic_10ms    = { 2,     10,  OS_PRIORITY_HIGH,              1024/4};
+BMS_Task_Definition_s eng_tskdef_cyclic_100ms   = {56,    100,  OS_PRIORITY_ABOVE_NORMAL,      1024/4};
+BMS_Task_Definition_s eng_tskdef_eventhandler   = { 0,      1,  OS_PRIORITY_VERY_HIGH,         1024/4};
+BMS_Task_Definition_s eng_tskdef_diagnosis      = { 0,      1,  OS_PRIORITY_BELOW_REALTIME,    1024/4};
 
-static BMS_Task_Definition_s eng_tskdef_engine          = {0, 1, OS_PRIORITY_REALTIME, 1024 / 4};
-
-/**
- * Definition of task handle of the engine task
- */
-static xTaskHandle eng_handle_engine;
-
-/**
- * Definition of task handle 1 millisecond task
- */
-static xTaskHandle eng_handle_tsk_1ms;
-
-/**
- * Definition of task handle 10 milliseconds task
- */
-static xTaskHandle eng_handle_tsk_10ms;
-
-/**
- * Definition of task handle 100 milliseconds task
- */
-static xTaskHandle eng_handle_tsk_100ms;
-
-/**
- * Definition of task handle Diagnosis task
- */
-static xTaskHandle eng_handle_tsk_diagnosis;
-
-/**
- * Definition of task handle EventHandler
- */
-static xTaskHandle eng_handle_tsk_eventhandler;
-
-
-QueueHandle_t data_queueID;
 /*================== Function Prototypes ==================================*/
 
 /*================== Function Implementations =============================*/
 
-void ENG_CreateQueues(void)
-{
-    /* Create a queue capable of containing a pointer of type DATA_QUEUE_MESSAGE_s
-    Data of Messages are passed by pointer as they contain a lot of data. */
-    data_queueID = xQueueCreate( 1, sizeof( DATA_QUEUE_MESSAGE_s) );
 
-    if(data_queueID  ==  NULL_PTR) {
-        // Failed to create the queue
-        ;            // @ TODO Error Handling
+void ENG_Init(void) {
+    SYS_RETURN_TYPE_e sys_retVal = SYS_ILLEGAL_TASK_TYPE;
+
+    DATA_BLOCK_ERRORSTATE_s error_flags;
+
+    DB_ReadBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
+
+    error_flags.general_error               = 0;
+
+    error_flags.currentsensorresponding     = 0;
+
+    error_flags.main_plus                   = 0;
+    error_flags.main_minus                  = 0;
+    error_flags.precharge                   = 0;
+    error_flags.charge_main_plus            = 0;
+    error_flags.charge_main_minus           = 0;
+    error_flags.charge_precharge            = 0;
+
+    error_flags.interlock                   = 0;
+
+    error_flags.over_current_charge         = 0;
+    error_flags.over_current_discharge      = 0;
+    error_flags.over_voltage                = 0;
+    error_flags.under_voltage               = 0;
+    error_flags.over_temperature_charge     = 0;
+    error_flags.over_temperature_discharge  = 0;
+    error_flags.under_temperature_charge    = 0;
+    error_flags.under_temperature_discharge = 0;
+    error_flags.crc_error                   = 0;
+    error_flags.mux_error                   = 0;
+    error_flags.spi_error                   = 0;
+
+    error_flags.can_timing                  = 0;
+    error_flags.can_timing_cc               = 0;
+
+    error_flags.can_cc_used                 = 1;
+
+    DB_WriteBlock(&error_flags, DATA_BLOCK_ID_ERRORSTATE);
+
+    // Init Sys
+    sys_retVal = SYS_SetStateRequest(SYS_STATE_INIT_REQUEST);
+
+#if BUILD_MODULE_ENABLE_SAFETY_FEATURES == 1
+    IMC_enableInterrupt();
+#endif
+}
+
+void ENG_Cyclic_1ms(void) {
+    MEAS_Ctrl();
+    LTC_Trigger();
+    EEPR_Trigger();
+
+
+}
+
+void ENG_Cyclic_10ms(void) {
+    SYS_Trigger();
+    CONT_Trigger();
+    ILCK_Trigger();
+#if CAN_USE_CAN_NODE0
+    CAN_TxMsgBuffer(CAN_NODE0);
+#endif
+#if CAN_USE_CAN_NODE1
+    CAN_TxMsgBuffer(CAN_NODE1);
+#endif
+
+#if BUILD_MODULE_ENABLE_WATCHDOG
+    WDG_IWDG_Refresh();
+#endif
+
+#ifdef BUILD_MODULE_CPULOAD_MEASUREMENT
+    CPULOAD_Calc();
+#endif
+}
+
+void ENG_Cyclic_100ms(void) {
+    static uint8_t counter = 0;
+
+    ADC_Ctrl();
+
+    // Read every 200ms because of possible jitter and lowest Bender frequency 10Hz -> 100ms
+    if (counter % 2 == 0) {
+        ISO_MeasureInsulation();
     }
+    if (counter == 255) {
+        NVM_SetOperatingHours();
+    }
+    counter++;
 }
 
-void ENG_CreateMutex(void)
-{
+
+void ENG_EventHandler(void) {
 }
 
-void ENG_CreateEvent(void)
-{
+void ENG_Diagnosis(void) {
 }
 
-void ENG_CreateTask(void) {
-    // Database Task
-    osThreadDef(TSK_Engine, (os_pthread )OS_TSK_Engine,
-            eng_tskdef_engine.Priority, 0, eng_tskdef_engine.Stacksize);
-    eng_handle_engine = osThreadCreate(osThread(TSK_Engine), NULL);
-
-    // Cyclic Task 1ms
-    osThreadDef(TSK_Cyclic_1ms, (os_pthread )OS_TSK_Cyclic_1ms,
-            eng_tskdef_cyclic_1ms.Priority, 0, eng_tskdef_cyclic_1ms.Stacksize);
-    eng_handle_tsk_1ms = osThreadCreate(osThread(TSK_Cyclic_1ms), NULL);
-
-    // Cyclic Task 10ms
-    osThreadDef(TSK_Cyclic_10ms, (os_pthread )OS_TSK_Cyclic_10ms,
-            eng_tskdef_cyclic_10ms.Priority, 0, eng_tskdef_cyclic_10ms.Stacksize);
-    eng_handle_tsk_10ms = osThreadCreate(osThread(TSK_Cyclic_10ms), NULL);
-
-    // Cyclic Task 100ms
-    osThreadDef(TSK_Cyclic_100ms, (os_pthread )OS_TSK_Cyclic_100ms,
-            eng_tskdef_cyclic_100ms.Priority, 0, eng_tskdef_cyclic_100ms.Stacksize);
-    eng_handle_tsk_100ms = osThreadCreate(osThread(TSK_Cyclic_100ms), NULL);
-
-    // EventHandler Task
-    osThreadDef(TSK_EventHandler, (os_pthread )OS_TSK_EventHandler,
-            eng_tskdef_eventhandler.Priority, 0, eng_tskdef_eventhandler.Stacksize);
-    eng_handle_tsk_eventhandler = osThreadCreate(osThread(TSK_EventHandler), NULL);
-
-    // Diagnosis Task
-    osThreadDef(TSK_Diagnosis, (os_pthread )OS_TSK_Diagnosis,
-            eng_tskdef_diagnosis.Priority, 0, eng_tskdef_diagnosis.Stacksize);
-    eng_handle_tsk_diagnosis = osThreadCreate(osThread(TSK_Diagnosis), NULL);
-}

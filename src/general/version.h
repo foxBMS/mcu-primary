@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -49,32 +49,32 @@ extern uint32_t _jumpadressvectable[];
  * Use Case:
  * uint8_t  Version[16] example:     "V0.4.0 "   ( 15 char + '\0' )
  */
-#define VER_SW_VERSION              BUILD_VERSION
+#define VER_SW_VERSION              BUILD_VERSION_PRIMARY
 
 /**
  * @brief   Software Project Name
  * Use Case:
  * uint8_t  Version[16] example:     " foxBMS"   ( 15 char + '\0' )
  */
-#define VER_PROJECT                 BUILD_APPNAME
+#define VER_PROJECT                 BUILD_APPNAME_PRIMARY
 
 /**
  * @brief   Bootloader Software Build Major Number (bootloaders value must match to the applications one )
  *
  */
-#define VER_BL_BUILD_MAJOR             BUILD_BL_MAJOR
+#define VER_BL_BUILD_MAJOR             BUILD_VERSION_BOOLOADER_MAJOR
 
 /**
  * @brief   Bootloader Software Build Minor Number (bootloaders value must match to the applications one )
  *
  */
-#define VER_BL_BUILD_MINOR             BUILD_BL_MINOR
+#define VER_BL_BUILD_MINOR             BUILD_VERSION_BOOLOADER_MINOR
 
 /**
  * @brief   Bootloader Software Build Bugfix Number (bootloaders value need not match to the applications one )
  *
  */
-#define VER_BL_BUILD_BUGFIX            BUILD_BL_BUGFIX
+#define VER_BL_BUILD_BUGFIX            BUILD_VERSION_BOOLOADER_BUGFIX
 
 /**
  * @brief   Application Valid Marker in Flash header

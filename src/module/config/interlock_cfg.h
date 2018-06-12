@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -55,13 +55,22 @@
  */
 #define ILCK_INTERLOCK_FEEDBACK                 IO_PIN_MCU_0_INTERLOCK_FEEDBACK
 
+/**
+ * This define MUST represent the cycle time of the task in which context the
+ * functions run, e.g., if the ILCK_Trigger() is running in the 10 ms task
+ * then the define must be set to 10.
+ *
+ * This define also sets the minimum time.
+ */
+
+#define ILCK_TASK_CYCLE_CONTEXT_MS (10)
 
 
 /**
  * ILCK statemachine short time definition in ms
  */
 
-#define ILCK_STATEMACH_SHORTTIME_MS     1
+#define ILCK_STATEMACH_SHORTTIME_MS     (ILCK_TASK_CYCLE_CONTEXT_MS)
 
 
 /*================== Constant and Variable Definitions ====================*/

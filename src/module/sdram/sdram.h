@@ -21,40 +21,50 @@
  */
 
 /**
- * @file    sdram_cfg.h
+ * @file    sdram.h
  * @author  foxBMS Team
- * @date    24.05.2016 (date of creation)
- * @ingroup DRIVERS_CONF
+ * @date    13.11.2015 (date of creation)
+ * @ingroup UTIL
  * @prefix  SDRAM
  *
- * @brief   Headers for the external SDRAM configuration and data definitions
+ * @brief   Headers for the driver for the volatile SDRAM.
  *
  */
 
-#ifndef SDRAM_CFG_H_
-#define SDRAM_CFG_H_
+#ifndef SDRAM_H_
+#define SDRAM_H_
 
 /*================== Includes =============================================*/
-#include <stdint.h>
+#include "sdram_cfg.h"
+
 /*================== Macros and Definitions ===============================*/
 
 /*================== Constant and Variable Definitions ====================*/
-extern uint8_t _sidata_ext[];
-extern uint8_t _s_extdata[];
-extern uint8_t _e_extdata[];
-
-#if 0
-extern uint32_t extsd_testbuffer[100];
-extern volatile uint32_t extsd_test2;
-#endif
 
 /*================== Function Prototypes ==================================*/
-#if 0
-extern void SDRAM_testram(void);
-#endif
 
-extern void SDRAM_c_init(void);
+/**
+ * @brief   flexible memory controller (FMC) initialization for SDRAM
+ *
+ * @return  void
+ */
+extern void SDRAM_Init(void);
+
+/**
+ * @brief   Copying of initialized data from Flash to SDRAM
+ *
+ * @return  void
+ */
+extern void EXTSD_c_init(void);
+
+
+/**
+ * @brief   SDRAM memory test
+ *
+ * @return  void
+ */
+extern void SDRAM_testram(void);
 
 /*================== Function Implementations =============================*/
 
-#endif /* SDRAM_CFG_H_ */
+#endif /* SDRAM_H_ */

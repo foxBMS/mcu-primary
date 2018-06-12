@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -155,9 +155,9 @@ typedef struct {
     uint16_t timer;                         /*!< time in ms before the state machine processes the next state, e.g. in counts of 1ms    */
     BMS_STATE_REQUEST_e statereq;           /*!< current state request made to the state machine                                        */
     BMS_STATEMACH_e state;                  /*!< state of Driver State Machine                                                          */
-    uint8_t substate;                       /*!< current substate of the state machine                                                  */
+    BMS_STATEMACH_SUB_e substate;           /*!< current substate of the state machine                                                  */
     BMS_STATEMACH_e laststate;              /*!< previous state of the state machine                                                    */
-    uint8_t lastsubstate;                   /*!< previous substate of the state machine                                                 */
+    BMS_STATEMACH_SUB_e lastsubstate;       /*!< previous substate of the state machine                                                 */
     uint32_t ErrRequestCounter;             /*!< counts the number of illegal requests to the LTC state machine */
     uint8_t triggerentry;                   /*!< counter for re-entrance protection (function running flag) */
     uint8_t counter;                        /*!< general purpose counter*/

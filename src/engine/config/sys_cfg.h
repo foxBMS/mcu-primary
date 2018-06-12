@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -39,23 +39,34 @@
 #include "contactor.h"
 
 /*================== Macros and Definitions ===============================*/
+
+/**
+ * This define MUST represent the cycle time of the task in which context the
+ * functions run, e.g., if the SYS_Trigger() is running in the 10 ms task
+ * then the define must be set to 10.
+ *
+ * This define also sets the minimum time.
+ */
+
+#define SYS_TASK_CYCLE_CONTEXT_MS (10)
+
 /**
  * SYS statemachine short time definition in ms
  */
 
-#define SYS_STATEMACH_SHORTTIME_MS      1
+#define SYS_STATEMACH_SHORTTIME_MS      (SYS_TASK_CYCLE_CONTEXT_MS)
 
 /**
  * SYS statemachine short time definition in ms
  */
 
-#define SYS_STATEMACH_MEDIUMTIME_MS     10
+#define SYS_STATEMACH_MEDIUMTIME_MS     (SYS_TASK_CYCLE_CONTEXT_MS)
 
 /**
  * SYS statemachine long time definition in ms
  */
 
-#define SYS_STATEMACH_LONGTIME_MS       100
+#define SYS_STATEMACH_LONGTIME_MS       ((10) * (SYS_TASK_CYCLE_CONTEXT_MS))
 
 
 /*================== Function Prototypes ==================================*/

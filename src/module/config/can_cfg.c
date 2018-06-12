@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -64,7 +64,7 @@ CAN_HandleTypeDef hcan0 = {
         .Lock = HAL_UNLOCKED,
         .State = HAL_CAN_STATE_RESET,
         .ErrorCode = HAL_CAN_ERROR_NONE,
-#if (CAN_BAUDRATE == 1000000)
+#if (CAN0_BAUDRATE == 1000000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 3,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -80,7 +80,7 @@ CAN_HandleTypeDef hcan0 = {
 #else
 #error "Please configure CAN Baudrate according to your clock configuration "
 #endif
-#elif (CAN_BAUDRATE == 500000)
+#elif (CAN0_BAUDRATE == 500000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 6,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -96,7 +96,7 @@ CAN_HandleTypeDef hcan0 = {
 #else
 #error "Please configure CAN Baudrate according to your clock configuration "
 #endif
-#elif (CAN_BAUDRATE == 250000)
+#elif (CAN0_BAUDRATE == 250000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 12,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -112,7 +112,7 @@ CAN_HandleTypeDef hcan0 = {
 #else
 #error "Please configure CAN Baudrate according to your clock configuration "
 #endif
-#elif (CAN_BAUDRATE == 125000)
+#elif (CAN0_BAUDRATE == 125000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 24,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -158,7 +158,7 @@ CAN_HandleTypeDef hcan1 = {
         .Lock = HAL_UNLOCKED,
         .State = HAL_CAN_STATE_RESET,
         .ErrorCode = HAL_CAN_ERROR_NONE,
-#if (CAN_BAUDRATE == 1000000)
+#if (CAN1_BAUDRATE == 1000000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 3,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -174,7 +174,7 @@ CAN_HandleTypeDef hcan1 = {
 #else
 #error "Please configure CAN Baudrate according to your clock configuration "
 #endif
-#elif (CAN_BAUDRATE == 500000)
+#elif (CAN1_BAUDRATE == 500000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 6,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -190,7 +190,7 @@ CAN_HandleTypeDef hcan1 = {
 #else
 #error "Please configure CAN Baudrate according to your clock configuration "
 #endif
-#elif (CAN_BAUDRATE == 250000)
+#elif (CAN1_BAUDRATE == 250000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 12,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants
@@ -206,7 +206,7 @@ CAN_HandleTypeDef hcan1 = {
 #else
 #error "Please configure CAN Baudrate according to your clock configuration "
 #endif
-#elif (CAN_BAUDRATE == 125000)
+#elif (CAN1_BAUDRATE == 125000)
 #if (RCC_APB1_CLOCK  ==  42000000)
         .Init.Prescaler = 24,        // CAN_CLOCK = APB1 = 42MHz
                                     // resulting CAN speed: APB1/prescaler/sumOfTimequants

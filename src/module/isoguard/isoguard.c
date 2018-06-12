@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -157,7 +157,7 @@ void ISO_MeasureInsulation(void) {
     ISO_measData.timestamp = MCU_GetTimeStamp();
 
     /* Store data in database */
-    DATA_StoreDataBlock(&ISO_measData, DATA_BLOCK_ID_ISOGUARD);
+    DB_WriteBlock(&ISO_measData, DATA_BLOCK_ID_ISOGUARD);
 #endif
 
     DIAG_SysMonNotify(DIAG_SYSMON_ISOGUARD_ID, 0);        // task is running, state = ok

@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -150,9 +150,9 @@ typedef struct {
     uint16_t timer;                         /*!< time in ms before the state machine processes the next state, e.g. in counts of 1ms    */
     SYS_STATE_REQUEST_e statereq;           /*!< current state request made to the state machine                                        */
     SYS_STATEMACH_e state;                  /*!< state of Driver State Machine                                                          */
-    uint8_t substate;                       /*!< current substate of the state machine                                                  */
+    SYS_STATEMACH_SUB_e substate;                       /*!< current substate of the state machine                                                  */
     SYS_STATEMACH_e laststate;              /*!< previous state of the state machine                                                    */
-    uint8_t lastsubstate;                   /*!< previous substate of the state machine                                                 */
+    SYS_STATEMACH_SUB_e lastsubstate;                   /*!< previous substate of the state machine                                                 */
     uint32_t ErrRequestCounter;             /*!< counts the number of illegal requests to the SYS state machine */
     uint16_t InitCounter;                   /*!< Timeout to wait for initialization of state machine state machine */
     uint8_t triggerentry;                   /*!< counter for re-entrance protection (function running flag) */

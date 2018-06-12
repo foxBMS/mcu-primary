@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -65,7 +65,6 @@
 
 /*================== Constant and Variable Definitions ====================*/
 
-#if FOXBMS_BOARD == 1
 const IO_PIN_CFG_s io_cfg[] = {
     /*
      * Trace
@@ -80,11 +79,11 @@ const IO_PIN_CFG_s io_cfg[] = {
      * Data Storage SPI and Supply
      */
     {IO_PIN_MCU_0_DATA_STORAGE_EEPROM_SPI_NSS,     IO_MODE_OUTPUT_PP,      IO_PIN_NOPULL,      IO_SPEED_LOW,       IO_ALTERNATE_NO_ALTERNATE,  IO_PIN_LOCK_ENABLE,     IO_PIN_SET},
-    {IO_PIN_MCU_0_DATA_STORAGE_SCCARD_SPI_NSS,     IO_MODE_OUTPUT_PP,      IO_PIN_NOPULL,      IO_SPEED_LOW,       IO_ALTERNATE_NO_ALTERNATE,  IO_PIN_LOCK_ENABLE,     IO_PIN_SET},
+    {IO_PIN_MCU_0_DATA_STORAGE_MEMORY_CARD_SPI_NSS,     IO_MODE_OUTPUT_PP,      IO_PIN_NOPULL,      IO_SPEED_LOW,       IO_ALTERNATE_NO_ALTERNATE,  IO_PIN_LOCK_ENABLE,     IO_PIN_SET},
     {IO_PIN_MCU_0_DATA_STORAGE_SPI_MISO,           IO_MODE_AF_PP,          IO_PIN_NOPULL,      IO_SPEED_HIGH,      IO_ALTERNATE_AF5_SPI6,      IO_PIN_LOCK_ENABLE},
     {IO_PIN_MCU_0_DATA_STORAGE_SPI_SCK,            IO_MODE_AF_PP,          IO_PIN_NOPULL,      IO_SPEED_HIGH,      IO_ALTERNATE_AF5_SPI6,      IO_PIN_LOCK_ENABLE},
     {IO_PIN_MCU_0_DATA_STORAGE_SPI_MOSI,           IO_MODE_AF_PP,          IO_PIN_NOPULL,      IO_SPEED_HIGH,      IO_ALTERNATE_AF5_SPI6,      IO_PIN_LOCK_ENABLE},
-    {IO_PIN_MCU_0_SDCARD_SUPPLY_CONTROL,           IO_MODE_OUTPUT_PP,      0,                  0,                  IO_ALTERNATE_NO_ALTERNATE,  IO_PIN_LOCK_ENABLE},
+    {IO_PIN_MCU_0_MEMORY_CARD_SUPPLY_CONTROL,           IO_MODE_OUTPUT_PP,      0,                  0,                  IO_ALTERNATE_NO_ALTERNATE,  IO_PIN_LOCK_ENABLE},
 
     /*
      * Flexible Memory Controller
@@ -241,7 +240,6 @@ const IO_PIN_CFG_s io_cfg[] = {
     };
 
 const uint8_t io_cfg_length = sizeof(io_cfg)/sizeof(io_cfg[0]);
-#endif // FOXBMS_BOARD
 
 /*================== Function Prototypes ==================================*/
 

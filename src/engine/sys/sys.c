@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -273,13 +273,13 @@ void SYS_Trigger(void) {
             } else if (sys_state.substate == SYS_WAIT_INITIALIZATION_INTERLOCK) {
                 ilckstate = ILCK_GetState();
                 if (ilckstate == ILCK_STATEMACH_WAIT_FIRST_REQUEST) {
-                    ILCK_SetStateRequest(ILCK_STATE_CLOSE_REQUEST);
+                    ILCK_SetStateRequest(ILCK_STATE_OPEN_REQUEST);
                     sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                     sys_state.state = SYS_STATEMACH_INITIALIZE_CONTACTORS;
                     sys_state.substate = SYS_ENTRY;
                     break;
                 } else {
-                    if (sys_state.InitCounter > 1000) {
+                    if (sys_state.InitCounter > (1000/SYS_TASK_CYCLE_CONTEXT_MS)) {
                         sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                         sys_state.state = SYS_STATEMACH_ERROR;
                         sys_state.substate = SYS_ILCK_INIT_ERROR;
@@ -311,7 +311,7 @@ void SYS_Trigger(void) {
                     sys_state.substate = SYS_ENTRY;
                     break;
                 } else {
-                    if (sys_state.InitCounter > 1000) {
+                    if (sys_state.InitCounter > (1000/SYS_TASK_CYCLE_CONTEXT_MS)) {
                         sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                         sys_state.state = SYS_STATEMACH_ERROR;
                         sys_state.substate = SYS_CONT_INIT_ERROR;
@@ -336,7 +336,7 @@ void SYS_Trigger(void) {
                     break;
                 } else if (sys_state.substate == SYS_WAIT_INITIALIZATION_BAL) {
                     balstate = BAL_GetState();
-                    if (balstate == BAL_STATEMACH_INITIALIZED) {
+                    if (balstate == BAL_STATEMACH_INITIALIZED || balstate == BAL_STATEMACH_INACTIVE) {
                         if (BALANCING_DEFAULT_INACTIVE == TRUE) {
                             BAL_SetStateRequest(BAL_STATE_INACTIVE_OVERRIDE_REQUEST);
                         }
@@ -345,7 +345,7 @@ void SYS_Trigger(void) {
                         sys_state.substate = SYS_ENTRY;
                         break;
                     } else {
-                        if (sys_state.InitCounter > 1000) {
+                        if (sys_state.InitCounter > (1000/SYS_TASK_CYCLE_CONTEXT_MS)) {
                             sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                             sys_state.state = SYS_STATEMACH_ERROR;
                             sys_state.substate = SYS_CONT_INIT_ERROR;
@@ -376,7 +376,7 @@ void SYS_Trigger(void) {
                         sys_state.substate = SYS_ENTRY;
                         break;
                     } else {
-                        if (sys_state.InitCounter > 1000) {
+                        if (sys_state.InitCounter > (1000/SYS_TASK_CYCLE_CONTEXT_MS)) {
                             sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                             sys_state.state = SYS_STATEMACH_ERROR;
                             sys_state.substate = SYS_MEAS_INIT_ERROR;
@@ -411,7 +411,7 @@ void SYS_Trigger(void) {
                         sys_state.substate = SYS_ENTRY;
                         break;
                     } else {
-                        if (sys_state.InitCounter > 1000) {
+                        if (sys_state.InitCounter > (1000/SYS_TASK_CYCLE_CONTEXT_MS)) {
                             sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                             sys_state.state = SYS_STATEMACH_ERROR;
                             sys_state.substate = SYS_CURRENT_SENSOR_PRESENCE_ERROR;
@@ -458,7 +458,7 @@ void SYS_Trigger(void) {
                         sys_state.substate = SYS_ENTRY;
                         break;
                     } else {
-                        if (sys_state.InitCounter > 1000) {
+                        if (sys_state.InitCounter > (1000/SYS_TASK_CYCLE_CONTEXT_MS)) {
                             sys_state.timer = SYS_STATEMACH_SHORTTIME_MS;
                             sys_state.state = SYS_STATEMACH_ERROR;
                             sys_state.substate = SYS_BMS_INIT_ERROR;

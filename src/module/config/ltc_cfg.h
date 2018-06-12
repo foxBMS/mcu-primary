@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -266,7 +266,7 @@ extern LTC_MUX_SEQUENZ_s ltc_mux_seq;
 extern const uint8_t ltc_muxsensortemperatur_cfg[BS_NR_OF_TEMP_SENSORS_PER_MODULE];
 
 /**
- * Lookup table to indicate which voltage inputs are used
+ * Lookup table to indicate which voltage inpus are used
  */
 extern const uint8_t ltc_voltage_input_used[BS_MAX_SUPPORTED_CELLS];
 

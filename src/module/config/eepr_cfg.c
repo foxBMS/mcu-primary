@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -97,7 +97,7 @@ const EEPR_BOARD_INFO_s eepr_board_info_default = {
 
 EEPR_BOARD_INFO_s eepr_board_info;
 
-EEPR_CH_CFG_s eepr_ch_cfg[EEPR_CHANNEL_MAX_NR] = {
+EEPR_CH_CFG_s eepr_ch_cfg[] = {
 /* Hardware Protected Channels (last quarter of address area)  */
         /*  EEPROM CHANNELS: HW/SW-SYSTEM */
         {0x3000, sizeof(EEPR_HEADER_s),           EEPR_CH_HEADER,          0x3000 + sizeof(EEPR_HEADER_s) - 4,           EEPR_SW_WRITE_UNPROTECTED, (uint8_t*)&eepr_header},
@@ -136,6 +136,7 @@ extern uint8_t compiler_throw_an_error_7[(sizeof(EEPR_CALIB_STATISTICS_s) == 0x2
 extern uint8_t compiler_throw_an_error_8[(0x70 == 0x70)?1:-1]; // EEPROM FORMAT ERROR! Change of data size. Please note comment above!!!
 
 
+const uint8_t eepr_nr_of_channels = sizeof(eepr_ch_cfg)/sizeof(eepr_ch_cfg[0]);
 
 // write buffer for calibration data in eeprom
 uint8_t eepr_WR_RD_buffer[EEPR_CH_MAXLENGTH];
@@ -479,7 +480,7 @@ EEPR_ERRORTYPES_e EEPR_InitChannelData(void)
 
     if(RTC_NVMRAM_DATAVALID_VARIABLE == 0)
     {  // NVM data corrupt, so set all the dirty flags and take backup (if valid) or default values
-        for(cnt = 0; cnt < EEPR_CHANNEL_MAX_NR; cnt++){
+        for(cnt = 0; cnt < eepr_nr_of_channels; cnt++){
             EEPR_SetChDirtyFlag(cnt);
         }
         errtype |= EEPR_ReadChannelData(EEPR_CH_NVSOC);

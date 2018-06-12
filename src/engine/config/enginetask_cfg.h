@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -34,8 +34,6 @@
 #ifndef ENGINETASK_CFG_H_
 #define ENGINETASK_CFG_H_
 
-// FIXME is separation of cfg and normal file reasonable? actually I would think of it exactly in the opposite way: implementation changes in cfg.c and fixed code in .c
-
 /*================== Includes =============================================*/
 #include "general.h"
 #include "os.h"
@@ -43,46 +41,91 @@
 /*================== Macros and Definitions ===============================*/
 
 /*================== Constant and Variable Definitions ====================*/
-// FIXME doxygen comments
-// Task Configurations
+
+/**
+ * @brief   Task configuration of the 1ms engine task
+ *
+ * @details Predefined 1ms task for 1ms cyclic engine task
+ *
+ * @ingroup API_OS
+ */
 extern BMS_Task_Definition_s eng_tskdef_cyclic_1ms;
+
+/**
+ * @brief   Task configuration of the 10ms engine task
+ *
+ * @details Predefined 10ms task for 10ms cyclic engine task
+ *
+ * @ingroup API_OS
+ */
 extern BMS_Task_Definition_s eng_tskdef_cyclic_10ms;
+
+/**
+ * @brief   Task configuration of the 100ms engine task
+ *
+ * @details Predefined 100ms task for 100ms cyclic engine task
+ *
+ * @ingroup API_OS
+ */
 extern BMS_Task_Definition_s eng_tskdef_cyclic_100ms;
+
+
 extern BMS_Task_Definition_s eng_tskdef_eventhandler;
 extern BMS_Task_Definition_s eng_tskdef_diagnosis;
 
-extern QueueHandle_t data_queueID;
 /*================== Function Prototypes ==================================*/
-
 /**
- * @brief   creates queues, called before scheduler start
+ * @brief   Initializes modules that were not initialized before scheduler
+ *          starts
+ *
+ * @details This function is called after the scheduler started but before any
+ *          cyclic task runs. Here modules get initialized that are not used
+ *          during the startup process.
  *
  * @return  void
  */
-extern void ENG_CreateQueues(void);
+extern void ENG_Init(void);
 
 
 /**
- * @brief   creates mutexes, called before scheduler start
+ * @brief   Cyclic 1ms task for the LTC measurement
  *
  * @return  void
  */
-extern void ENG_CreateMutex(void);
-
-
-/**
- * @brief   creates events, called before scheduler start
- *
- * @return  void
- */
-extern void ENG_CreateEvent(void);
+extern void ENG_Cyclic_1ms(void);
 
 /**
- * @brief   creates cyclic tasks, called before scheduler start
+ * @brief   Task for system- and bmscontrol and SOX algorithms
  *
- * @return  void
  */
-extern void ENG_CreateTask(void);
+extern void ENG_Cyclic_10ms(void);
+
+/**
+ * @brief   Task for ADC control, balancing control and isolation
+ *          measurement
+ *
+ */
+extern void ENG_Cyclic_100ms(void);
+
+/**
+ * @brief   Engine Task for handling of events
+ *
+ */
+extern void ENG_EventHandler(void);
+
+/**
+ * @brief   Engine Task for diagnosis
+ *
+ */
+extern void ENG_Diagnosis(void);
+
+/**
+ * @brief   Database-Task
+ * @details The task manages the data exchange with the database and must have a
+ *          higher task priority than any task using the database.
+ *
+ */
+extern void ENG_TSK_Engine(void);
 
 /*================== Function Implementations =============================*/
 

@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -53,12 +53,12 @@
 /*
  *Data Storage SPI and Supply
  */
-#define IO_PIN_MCU_0_DATA_STORAGE_EEPROM_SPI_NSS     IO_PI_8     // package pin:7
-#define IO_PIN_MCU_0_DATA_STORAGE_SCCARD_SPI_NSS     IO_PI_9     // package pin:11
-#define IO_PIN_MCU_0_DATA_STORAGE_SPI_SCK            IO_PG_13    // package pin:156
-#define IO_PIN_MCU_0_DATA_STORAGE_SPI_MISO           IO_PG_12    // package pin:155
-#define IO_PIN_MCU_0_DATA_STORAGE_SPI_MOSI           IO_PG_14    // package pin:157
-#define IO_PIN_MCU_0_SDCARD_SUPPLY_CONTROL           IO_PC_1     // package pin:33
+#define IO_PIN_MCU_0_DATA_STORAGE_EEPROM_SPI_NSS        IO_PI_8     // package pin:7
+#define IO_PIN_MCU_0_DATA_STORAGE_MEMORY_CARD_SPI_NSS   IO_PI_9     // package pin:11
+#define IO_PIN_MCU_0_DATA_STORAGE_SPI_SCK               IO_PG_13    // package pin:156
+#define IO_PIN_MCU_0_DATA_STORAGE_SPI_MISO              IO_PG_12    // package pin:155
+#define IO_PIN_MCU_0_DATA_STORAGE_SPI_MOSI              IO_PG_14    // package pin:157
+#define IO_PIN_MCU_0_MEMORY_CARD_SUPPLY_CONTROL         IO_PC_1     // package pin:33
 
 /*
  *Flexible Memory Controller

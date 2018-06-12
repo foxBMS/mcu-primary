@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -50,7 +50,7 @@
  *****************************************************************************************/
 /**
  * @ingroup CONFIG_CAN
- * CAN bus baudrate. CAN peripheral prescaler and time quantums on microcontroller
+ * CAN0 bus baudrate. CAN peripheral prescaler and time quantums on microcontroller
  * will be configured accordingly. See STM32 Reference Manual p. 1097 for more
  *
  * \par Type:
@@ -60,12 +60,33 @@
 */
 
 /**
- * defines the BAUD rate of the CAN
+ * defines the BAUD rate of the CAN0
  */
-//#define CAN_BAUDRATE 1000000
-#define CAN_BAUDRATE 500000
-//#define CAN_BAUDRATE 250000
-//#define CAN_BAUDRATE 125000
+//#define CAN0_BAUDRATE 1000000
+#define CAN0_BAUDRATE 500000
+//#define CAN0_BAUDRATE 250000
+//#define CAN0_BAUDRATE 125000
+
+/**
+ * @ingroup CONFIG_CAN
+ * CAN1 bus baudrate. CAN peripheral prescaler and time quantums on microcontroller
+ * will be configured accordingly. See STM32 Reference Manual p. 1097 for more
+ *
+ * \par Type:
+ * select(4)
+ * \par Default:
+ * 1
+*/
+
+/**
+ * defines the BAUD rate of the CAN1
+ */
+//#define CAN1_BAUDRATE 1000000
+#define CAN1_BAUDRATE 500000
+//#define CAN1_BAUDRATE 250000
+//#define CAN1_BAUDRATE 125000
+
+
 
 /* CAN enabling */
 /**

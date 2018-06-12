@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -140,6 +140,16 @@
 */
 
 /**
+ * This define MUST represent the cycle time of the task in which context the
+ * functions run, e.g., if the CONT_Trigger() is running in the 10 ms task
+ * then the define must be set to 10.
+ *
+ * This define also sets the minimum time.
+ */
+
+#define CONT_TASK_CYCLE_CONTEXT_MS (10)
+
+/**
  * Counter limit used to prevent contactor oscillation
  */
 
@@ -155,56 +165,56 @@
  * Delay between open first and second contactor
  */
 
-#define CONT_DELAY_BETWEEN_OPENING_CONTACTORS_MS 500
+#define CONT_DELAY_BETWEEN_OPENING_CONTACTORS_MS        ((50) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 /**
  * Delay after opening second contactor
  */
 
-#define CONT_DELAY_AFTER_OPENING_SECOND_CONTACTORS_MS 500
+#define CONT_DELAY_AFTER_OPENING_SECOND_CONTACTORS_MS   ((50) *  (CONT_TASK_CYCLE_CONTEXT_MS))
 
 
 /**
  * CONT statemachine short time definition in ms
  */
 
-#define CONT_STATEMACH_SHORTTIME_MS 1
+#define CONT_STATEMACH_SHORTTIME_MS                     (CONT_TASK_CYCLE_CONTEXT_MS)
 
 
 /**
  * CONT statemachine time to wait after contactors opened because precharge failed in ms
  */
-#define CONT_STATEMACH_TIMEAFTERPRECHARGEFAIL_MS 1000
+#define CONT_STATEMACH_TIMEAFTERPRECHARGEFAIL_MS        ((100) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 
 
 /**
  * Precharge timeout in ms
  */
-#define CONT_PRECHARGE_TIMEOUT_MS 5000
+#define CONT_PRECHARGE_TIMEOUT_MS ((500) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 /**
  * Delay after closing main minus in ms
  */
-#define CONT_STATEMACH_WAIT_AFTER_CLOSING_MINUS_MS 500
+#define CONT_STATEMACH_WAIT_AFTER_CLOSING_MINUS_MS ((50) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 /**
  * Delay after closing precharge in ms
  */
 
-#define CONT_STATEMACH_WAIT_AFTER_CLOSING_PRECHARGE_MS 1000
+#define CONT_STATEMACH_WAIT_AFTER_CLOSING_PRECHARGE_MS ((100) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 
 /**
  * Delay after closing main plus in ms
  */
-#define CONT_STATEMACH_WAIT_AFTER_CLOSING_PLUS_MS 1000
+#define CONT_STATEMACH_WAIT_AFTER_CLOSING_PLUS_MS ((100) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 
 /**
  * Delay after opening precharge in ms
  */
-#define CONT_STATEMACH_WAIT_AFTER_OPENING_PRECHARGE_MS 500
+#define CONT_STATEMACH_WAIT_AFTER_OPENING_PRECHARGE_MS ((50) * (CONT_TASK_CYCLE_CONTEXT_MS))
 
 /**
  * @ingroup CONFIG_CONTACTOR

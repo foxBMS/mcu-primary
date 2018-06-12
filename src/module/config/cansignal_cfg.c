@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -514,7 +514,7 @@ static uint32_t cans_getvolt(uint32_t sigIdx, void *value) {
 
     // first signal to transmit cell voltages
     if (sigIdx == CAN0_SIG_Mod0_volt_valid_0_2) {
-        DATA_GetTable(&volt_tab, DATA_BLOCK_ID_CELLVOLTAGE);
+        DB_ReadBlock(&volt_tab, DATA_BLOCK_ID_CELLVOLTAGE);
     }
 
     // Determine module and cell number
@@ -734,7 +734,7 @@ uint32_t cans_gettemp(uint32_t sigIdx, void *value) {
 
     // first signal to transmit cell temperatures
     if (sigIdx == CAN0_SIG_Mod0_temp_valid_0_2) {
-        DATA_GetTable(&temp_tab, DATA_BLOCK_ID_CELLTEMPERATURE);
+        DB_ReadBlock(&temp_tab, DATA_BLOCK_ID_CELLTEMPERATURE);
     }
 
     // Determine module and cell number
@@ -970,21 +970,25 @@ uint32_t cans_gettempering(uint32_t sigIdx, void *value) {
 
 
 uint32_t cans_getcanerr(uint32_t sigIdx, void *value) {
-    static DATA_BLOCK_SYSTEMSTATE_s canerr_tab;
+    static DATA_BLOCK_ERRORSTATE_s canerr_tab;
+    static DATA_BLOCK_CONTFEEDBACK_s cancontfeedback_tab;
+    static DATA_BLOCK_ILCKFEEDBACK_s canilckfeedback_tab;
     static DATA_BLOCK_BALANCING_CONTROL_s balancing_tab;
+    static DATA_BLOCK_SYSTEMSTATE_s systemstate_tab;
 
     if (value != NULL_PTR) {
         switch (sigIdx) {
             case CAN0_SIG_GS0_general_error:
 
                 // First signal in CAN_MSG_GeneralState messages -> get database entry
-                DATA_GetTable(&canerr_tab, DATA_BLOCK_ID_SYSTEMSTATE);
+                DB_ReadBlock(&canerr_tab, DATA_BLOCK_ID_ERRORSTATE);
 
                 *(uint32_t *)value = canerr_tab.general_error;
                 break;
 
             case CAN0_SIG_GS0_current_state:
-                *(uint32_t *)value = canerr_tab.bms_state;
+                DB_ReadBlock(&systemstate_tab, DATA_BLOCK_ID_SYSTEMSTATE);
+                *(uint32_t *)value = systemstate_tab.bms_state;
                 break;
             case CAN0_SIG_GS0_error_overtemp_charge:
                 *(uint32_t *)value = canerr_tab.over_temperature_charge;
@@ -1028,12 +1032,16 @@ uint32_t cans_getcanerr(uint32_t sigIdx, void *value) {
             case CAN0_SIG_GS1_balancing_active:
 
                 // only signal to use the balancing database entry
-                DATA_GetTable(&balancing_tab, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+                DB_ReadBlock(&balancing_tab, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
                 *(uint32_t *)value = balancing_tab.enable_balancing;
                 break;
 
             case CAN0_SIG_GS2_state_cont_interlock:
-                *(uint32_t *)value = canerr_tab.contactor_feedback;
+                DB_ReadBlock(&cancontfeedback_tab, DATA_BLOCK_ID_CONTFEEDBACK);
+                DB_ReadBlock(&canilckfeedback_tab, DATA_BLOCK_ID_ILCKFEEDBACK);
+                cancontfeedback_tab.contactor_feedback &= ~(1 << 9);
+                cancontfeedback_tab.contactor_feedback |= canilckfeedback_tab.interlock_feedback << 9;
+                *(uint32_t *)value = cancontfeedback_tab.contactor_feedback;
                 break;
 
             default:
@@ -1047,7 +1055,7 @@ uint32_t cans_getcanerr(uint32_t sigIdx, void *value) {
 
 uint32_t cans_getsoc(uint32_t sigIdx, void *value) {
     static DATA_BLOCK_SOX_s sox_tab;
-    DATA_GetTable(&sox_tab, DATA_BLOCK_ID_SOX);
+    DB_ReadBlock(&sox_tab, DATA_BLOCK_ID_SOX);
     if (value != NULL_PTR) {
         switch (sigIdx) {
             case CAN0_SIG_SOC_mean:
@@ -1080,7 +1088,7 @@ static uint32_t cans_getMaxAllowedCurrent(uint32_t sigIdx, void *value) {
         switch (sigIdx) {
             case CAN0_SIG_MaxChargeCurrent:
                 // first signal
-                DATA_GetTable(&sox_tab, DATA_BLOCK_ID_SOX);
+                DB_ReadBlock(&sox_tab, DATA_BLOCK_ID_SOX);
 
                 // Check limits
                 canData = cans_checkLimits((float)sox_tab.sof_continuous_charge, sigIdx);
@@ -1140,7 +1148,7 @@ static uint32_t cans_getminmaxvolt(uint32_t sigIdx, void *value) {
 
             case CAN0_SIG_Cellvolt_mean:
                 // First signal that is called
-                DATA_GetTable(&minmax_volt_tab, DATA_BLOCK_ID_MINMAX);
+                DB_ReadBlock(&minmax_volt_tab, DATA_BLOCK_ID_MINMAX);
 
                 // Check limits
                 canData = cans_checkLimits((float)minmax_volt_tab.voltage_mean, sigIdx);
@@ -1194,7 +1202,7 @@ uint32_t cans_getminmaxtemp(uint32_t sigIdx, void *value) {
 
         case CAN0_SIG_Celltemp_mean:
             // First signal that is called
-            DATA_GetTable(&minmax_temp_tab, DATA_BLOCK_ID_MINMAX);
+            DB_ReadBlock(&minmax_temp_tab, DATA_BLOCK_ID_MINMAX);
 
             // Check limits
             canData = cans_checkLimits((float)minmax_temp_tab.temperature_mean, sigIdx);
@@ -1256,7 +1264,7 @@ static uint32_t cans_getpower(uint32_t sigIdx, void *value) {
        switch (sigIdx) {
            case CAN0_SIG_MovMean_Power_1s:
                // first signal to call function
-               DATA_GetTable(&powMovMean_tab, DATA_BLOCK_ID_MOV_MEAN);
+               DB_ReadBlock(&powMovMean_tab, DATA_BLOCK_ID_MOV_MEAN);
                // Check limits
                canData = cans_checkLimits((float)powMovMean_tab.movMean_power_1s, sigIdx);
                // Apply offset and factor
@@ -1315,7 +1323,7 @@ static uint32_t cans_getcurr(uint32_t sigIdx, void *value) {
        switch (sigIdx) {
            case CAN0_SIG_MovMean_Current_1s:
                // first signal to call function
-               DATA_GetTable(&curMovMean_tab, DATA_BLOCK_ID_MOV_MEAN);
+               DB_ReadBlock(&curMovMean_tab, DATA_BLOCK_ID_MOV_MEAN);
                // Check limits
                canData = cans_checkLimits((float)curMovMean_tab.movMean_current_1s, sigIdx);
                // Apply offset and factor
@@ -1435,8 +1443,9 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                     cans_current_tab.previous_timestamp = cans_current_tab.timestamp;
                     cans_current_tab.timestamp = MCU_GetTimeStamp();
                     cans_current_tab.current = (float)(currentValue);
+                    cans_current_tab.newCurrent++;
                     cans_current_tab.state_current++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_Voltage_1_Measurement:
                 // case CAN1_SIG_ISENS1_U1_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
@@ -1444,8 +1453,7 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                     voltageValue[idx] = (int32_t)(dummy[3] | dummy[2] << 8
                             | dummy[1] << 16 | dummy[0] << 24);
                     cans_current_tab.voltage[idx] = (float)(voltageValue[idx])*cans_CAN0_signals_rx[sigIdx].factor;
-                    cans_current_tab.state_voltage++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_Voltage_2_Measurement:
                 // case CAN1_SIG_ISENS2_U2_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
@@ -1454,7 +1462,7 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                             | dummy[1] << 16 | dummy[0] << 24);
                     cans_current_tab.voltage[idx] = (float)(voltageValue[idx])*cans_CAN0_signals_rx[sigIdx].factor;
                     cans_current_tab.state_voltage++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_Voltage_3_Measurement:
                 // case CAN1_SIG_ISENS3_U3_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
@@ -1463,7 +1471,7 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                             | dummy[1] << 16 | dummy[0] << 24);
                     cans_current_tab.voltage[idx]=(float)(voltageValue[idx])*cans_CAN0_signals_rx[sigIdx].factor;
                     cans_current_tab.state_voltage++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_Temperature_Measurement:
                 // case CAN1_SIG_ISENS4_T_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
@@ -1471,15 +1479,16 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                             | dummy[1] << 16 | dummy[0] << 24);
                     cans_current_tab.temperature = (float)(temperatureValue)*cans_CAN0_signals_rx[sigIdx].factor;
                     cans_current_tab.state_temperature++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_Power_Measurement:
                 // case CAN1_SIG_ISENS5_P_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
                     powerValue = (int32_t)(dummy[3] | dummy[2] << 8
                             | dummy[1] << 16 | dummy[0] << 24);
                     cans_current_tab.power = (float)(powerValue);
+                    cans_current_tab.newPower++;
                     cans_current_tab.state_power++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_CC_Measurement:
                 // case CAN1_SIG_ISENS6_CC_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
@@ -1489,7 +1498,7 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                     cans_current_tab.timestamp_cc = MCU_GetTimeStamp();
                     cans_current_tab.current_counter = (float)(currentcounterValue);
                     cans_current_tab.state_cc++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
                 case CAN0_SIG_IVT_EC_Measurement:
                 // case CAN1_SIG_ISENS7_EC_Measurement:  uncommented because identical position in CAN0 and CAN1 rx signal struct
@@ -1497,7 +1506,7 @@ static uint32_t cans_setcurr(uint32_t sigIdx, void *value) {
                             | dummy[1] << 16 | dummy[0] << 24);
                     cans_current_tab.energy_counter = (float)(energycounterValue);
                     cans_current_tab.state_ec++;
-                    DATA_StoreDataBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
+                    DB_WriteBlock(&cans_current_tab, DATA_BLOCK_ID_CURRENT);
                     break;
         }
     }
@@ -1509,7 +1518,7 @@ uint32_t cans_setstaterequest(uint32_t sigIdx, void *value) {
     DATA_BLOCK_STATEREQUEST_s staterequest_tab;
     uint8_t staterequest;
 
-    DATA_GetTable(&staterequest_tab, DATA_BLOCK_ID_STATEREQUEST);
+    DB_ReadBlock(&staterequest_tab, DATA_BLOCK_ID_STATEREQUEST);
 
     if (value != NULL_PTR) {
         if (sigIdx == CAN0_SIG_ReceiveStateRequest) {
@@ -1523,7 +1532,7 @@ uint32_t cans_setstaterequest(uint32_t sigIdx, void *value) {
             staterequest_tab.previous_timestamp = staterequest_tab.timestamp;
             staterequest_tab.timestamp = MCU_GetTimeStamp();
             staterequest_tab.state++;
-            DATA_StoreDataBlock(&staterequest_tab, DATA_BLOCK_ID_STATEREQUEST);
+            DB_WriteBlock(&staterequest_tab, DATA_BLOCK_ID_STATEREQUEST);
         }
     }
     return 0;
@@ -1539,7 +1548,7 @@ uint32_t cans_getisoguard(uint32_t sigIdx, void *value) {
 
             case CAN0_SIG_InsulationStatus:
             // First signal call
-            DATA_GetTable(&isoguard_tab, DATA_BLOCK_ID_ISOGUARD);
+            DB_ReadBlock(&isoguard_tab, DATA_BLOCK_ID_ISOGUARD);
 
             // Check limits
             canData = cans_checkLimits((float)isoguard_tab.state, sigIdx);
@@ -1584,7 +1593,7 @@ uint32_t cans_setdebug(uint32_t sigIdx, void *value) {
                 SOC_SetValue( ((float)((data[1])<<8 | (data[2])))/100.0, ((float)((data[1])<<8 | (data[2])))/100.0, ((float)((data[1])<<8 | (data[2])))/100.0 ); //divide by 100 to get SOC between 0 and 100
                 break;
             case 14:  // debug Message for Balancing on pack level
-                DATA_GetTable(&balancing_tab, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+                DB_ReadBlock(&balancing_tab, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
                 if (data[1] == 1) {
                     balancing_tab.request = 1;
                 } else if (data[1] == 2) {
@@ -1595,7 +1604,7 @@ uint32_t cans_setdebug(uint32_t sigIdx, void *value) {
                     balancing_tab.request = 0;
                 }
 
-                DATA_StoreDataBlock(&balancing_tab, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+                DB_WriteBlock(&balancing_tab, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
                 break;
             default:
                 break;

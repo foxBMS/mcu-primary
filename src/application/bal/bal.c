@@ -1,6 +1,6 @@
 /**
  *
- * @copyright &copy; 2010 - 2017, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
+ * @copyright &copy; 2010 - 2018, Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V. All rights reserved.
  *
  * BSD 3-Clause License
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -87,16 +87,16 @@ static uint8_t BAL_Activate(void);
 static void BAL_Init(void) {
     DATA_BLOCK_BALANCING_CONTROL_s bal_balancing;
 
-    DATA_GetTable(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_ReadBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
     bal_balancing.enable_balancing = 0;
-    DATA_StoreDataBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_WriteBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
 }
 
 static void BAL_Deactivate(void) {
     DATA_BLOCK_BALANCING_CONTROL_s bal_balancing;
     uint16_t i;
 
-    DATA_GetTable(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_ReadBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
 
     for (i=0;i<BS_NR_OF_BAT_CELLS;i++) {
         bal_balancing.value[i] = 0;
@@ -106,7 +106,7 @@ static void BAL_Deactivate(void) {
 
     bal_balancing.previous_timestamp = bal_balancing.timestamp;
     bal_balancing.timestamp = MCU_GetTimeStamp();
-    DATA_StoreDataBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_WriteBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
 
 }
 
@@ -118,9 +118,9 @@ static uint8_t BAL_Activate(void) {
     uint16_t min = 0;
     uint8_t finished = TRUE;
 
-    DATA_GetTable(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
-    DATA_GetTable(&bal_cellvoltage, DATA_BLOCK_ID_CELLVOLTAGE);
-    DATA_GetTable(&bal_minmax, DATA_BLOCK_ID_MINMAX);
+    DB_ReadBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_ReadBlock(&bal_cellvoltage, DATA_BLOCK_ID_CELLVOLTAGE);
+    DB_ReadBlock(&bal_minmax, DATA_BLOCK_ID_MINMAX);
 
     min = bal_minmax.voltage_min;
 
@@ -137,7 +137,7 @@ static uint8_t BAL_Activate(void) {
 
     bal_balancing.previous_timestamp = bal_balancing.timestamp;
     bal_balancing.timestamp = MCU_GetTimeStamp();
-    DATA_StoreDataBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
+    DB_WriteBlock(&bal_balancing, DATA_BLOCK_ID_BALANCING_CONTROL_VALUES);
 
     return finished;
 
@@ -342,7 +342,7 @@ void BAL_Trigger(void)
         }
     }
 
-    DATA_GetTable(&bal_current, DATA_BLOCK_ID_CURRENT);
+    DB_ReadBlock(&bal_current, DATA_BLOCK_ID_CURRENT);
     if (bal_current.current < 0.0) {
         bal_current.current = -bal_current.current;
     }
@@ -474,7 +474,7 @@ void BAL_Trigger(void)
                 break;
             }
             else if (bal_state.substate == BAL_BALANCE_ACTIVE){
-                DATA_GetTable(&bal_minmax,DATA_BLOCK_ID_MINMAX);
+                DB_ReadBlock(&bal_minmax,DATA_BLOCK_ID_MINMAX);
                 //do not balance under a certain voltage level
                 if (bal_minmax.voltage_min>=BAL_LOWER_VOLTAGE_LIMIT_MV) {
                     finished = BAL_Activate();
